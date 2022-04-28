@@ -1,18 +1,22 @@
 %!TEX root = ../Demo.tex
 % 中文摘要
 \begin{abstract}
-  本测试样例，供\XDUthesis{} 模板使用者学习之用，会尽量将模板涉及到的命令、环境；以及一些常用的图表、公式排版技巧进行展示，会对参考文献进行进一步阐述。
+  本课题利用DJI御2 行业进阶版无人机，使用DJI MSDK接口，利用无人机端侧遥控器通过以太网数据链路远程组网传输MAVLink协议帧信息至远端的自研地面站软件。无人机根据地面站给出的航点信息自主规划最优航线，航线结束后自主视觉引导降落至特定降落目标点，并在地面站端利用基于YoloV5深度学习的目标检测算法实时进行可见光与热成像目标检测与异常图像分析。
   
-  其余不太重要的部分，会以其他内容进行展示，例如，诗歌、歌词等。
-
+  本课题任务为：
+  1. 实现视频流压缩与编解码，并基于第三方 VPN 组网技术组建虚拟局域网，通过 RTMP 流视频协议实时传输双光吊舱视频，通过 MAVLink 协议传输无人机相关状态信息和控制指令。
+  2. 使用 OpenCV，在无人机的带屏遥控器端实现 PID 闭环控制，并通过调用无人机的机载 IMU 和气压计等传感器信息，实现视觉引导自主降落。
+  3. 基于YoloV5算法，利用自建的数据集，在地面站软件上实现 Windows 环境下的可见光变焦+热成像的双视频流目标检测。
 \end{abstract}
-\keywords{XDUthesis, 命令, 环境, 排版技巧}
+\keywords{YoloV5, DJI MSDK, MAVLink, 目标检测}
 
 % 英文摘要
 \begin{enabstract}
-  This paper is just a sample example for the users in learning the \XDUthesis. I will try my best to use the commands and environments which are involved by the \XDUthesis. Also, the popular composition skills in figures, tables and equations will be elaborated.
+  This project uses the DJI Royal 2 Industry Advanced Edition UAV, uses the DJI MSDK interface, and uses the UAV end-side remote control to remotely network to transmit MAVLink protocol frame information to the remote end of the self-developed ground station software through the Ethernet data link. The UAV independently plans the optimal route according to the waypoint information given by the ground station, and after the end of the route, it independently visually guides the landing to a specific landing target point, and uses the target detection algorithm based on YoloV5 deep learning at the ground station to detect visible light and thermal imaging targets and abnormal image analysis in real time.
   
-  In the part unimportant, I will show something others, such as poems and lyrics.
-
+  The tasks of this project are:
+  1. Realize video stream compression and codec, and form a virtual local area network based on third-party VPN networking technology, transmit dual-optical pod video in real time through RTMP streaming video protocol, and transmit UAVs-related status information and control instructions through MAVLink protocol.
+  2. Using OpenCV, PID closed-loop control is realized at the screen remote control end of the drone, and the sensor information such as the on-board IMU and barometer of the drone is called to achieve visual guidance for autonomous landing.
+  3. Based on the YoloV5 algorithm, the self-built data set is used to realize the dual video stream object detection of visible light zoom + thermal imaging in the Windows environment on the ground station software.
 \end{enabstract}
-\enkeywords{XDUthesis, commands, environments, skills}
+\enkeywords{YoloV5, DJI MSDK, MAVLink, Object Detection}
