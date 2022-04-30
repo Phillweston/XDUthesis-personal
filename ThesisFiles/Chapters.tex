@@ -15,7 +15,7 @@
 
 由于国内外以开源为主的飞行器大多采用以MAVLink协议为主的通信解决方案，因此该方案可实现将DJI系列飞行器与开源飞行器进行地面站统一化管理与云上部署，显著地提升了飞行器间的兼容性与可靠性。
 
-无人机根据MAVLink地面站给出的GPS航点信息进行航点飞行，飞行任务结束后，检测部分使用基于OpenCV霍夫圆特征检测+自适应阈值，控制部分LMPC PID位置控制实现自主视觉引导降落至特定降落目标点。
+无人机根据兼容MAVLink协议的QGC地面站给出的GPS航点信息进行航点飞行，飞行任务结束后，检测部分使用基于OpenCV霍夫圆特征检测+自适应阈值，控制部分LMPC PID位置控制实现自主视觉引导降落至特定降落目标点。
 
 \chapter{相关背景}
 \section{飞控平台}
@@ -165,6 +165,8 @@ $u(t)=K_{p}\left(e(t)+\frac{1}{T_{t}} \int_{0}^{t} e(t) d t+T_{D} \frac{d e(t)}{
 
 式中，Kp为比例增益，比例度成倒数关系；Tt为积分时间常数；TD为微分时间常数；u(t)为PID控制器的输出信号；e(t)为给定值r(t)与测量值之差。
 
+针对于传统的PID控制器，其本身一般不依赖于未来的误差，这是不对的。如果依赖未来的误差，也没有考虑车辆的模型，必然不准确的控制。而对于MPC控制器来说，延迟的一个重要因素就是执行器的动态特性。例如，从转向角指令下发到实际到达该转向角度的时间。这个可以通过简单的动态系统进行建模，并且整合到车辆模型中去。一种方法就是将使用车辆模型，根据延迟时间推算延迟时间后的车辆状态，这个车辆状态就是MPC计算的新初始状态。
+
 \subsection{MPC控制}
 
 1.MPC控制介绍
@@ -273,11 +275,95 @@ $$
 \overline{\boldsymbol{Q}}=\left[\begin{array}{ccc}\boldsymbol{Q} & \cdots & \\\vdots & \boldsymbol{Q} & \vdots \\& \cdots & \boldsymbol{F}\end{array}\right] \quad \overline{\boldsymbol{R}}=\left[\begin{array}{ccc}\boldsymbol{R} & \cdots & \\\vdots & \ddots & \vdots \\& \cdots & R\end{array}\right]
 $$
 
+\subsection{MAVLink协议}
+
+Mavlink协议最早由苏黎世联邦理工学院 计算机视觉与几何实验组 的 Lorenz Meier于2009年发布，并遵循LGPL开源协议。Mavlink协议是在串口通讯基础上的一种更高层的开源通讯协议，主要应用在微型飞行器（micro aerial vehicle）的通讯上。Mavlink是为小型飞行器和地面站（或者其他飞行器）通讯时常常用到的那些数据制定一种发送和接收的规则并加入了校验（checksum）功能。
+
+Mavlink传输时的基本单位是消息帧，以下为消息帧的结构。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{./Figure/Mavlink_Frame.png}
+  \caption{MAVLink Frame}\label{Fig:xd1}
+\end{figure}
+
+如上图所示，每个消息帧都是上述的结构，除了灰色外，其他的格子都代表了一个字节的数据。
+
+红色的是起始标志位（stx），在v1.0版本中以“FE”作为起始标志。这个标志位在mavlink消息帧接收端进行消息解码时有用处。
+
+第二个格子代表的是灰色部分（payload，称作有效载荷，要用的数据在有效载荷里面）的字节长度（len），范围从0到255之间。在mavlink消息帧接收端可以用它和实际收到的有效载荷的长度比较，以验证有效载荷的长度是否正确。
+
+第三个格子代表的是本次消息帧的序号（seq），每次发完一个消息，这个字节的内容会加1，加到255后会从0重新开始。这个序号用于mavlink消息帧接收端计算消息丢失比例用的，相当于是信号强度。
+
+第四个格子代表了发送本条消息帧的设备的系统编号（sys），使用PIXHAWK刷PX4固件时默认的系统编号为1，用于mavlink消息帧接收端识别是哪个设备发来的消息。
+
+第五个格子代表了发送本条消息帧的设备的单元编号（comp），使用PIXHAWK刷PX4固件时默认的单元编号为50，用于mavlink消息帧接收端识别是设备的哪个单元发来的消息（暂时没什么用） 。
+
+第六个格子代表了有效载荷中消息包的编号（msg），注意它和序号是不同的，这个字节很重要，mavlink消息帧接收端要根据这个编号来确定有效载荷里到底放了什么消息包并根据编号选择对应的方式来处理有效载荷里的信息包。
+
+最后两个字节是16位校验位，ckb是高八位，cka是低八位。校验码由crc16算法得到，算法将整个消息（从起始位开始到有效载荷结束，还要额外加上个MAVLINK_CRC_EXTRA字节）进行crc16计算，得出一个16位的校验码。之前提到的每种有效载荷里信息包（由消息包编号来表明是哪种消息包）会对应一个MAVLINK_CRC_EXTRA，这个 MAVLINK_CRC_EXTRA 是由生成mavlink代码的xml文件生成的，加入这个额外的东西是为了当飞行器和地面站使用不同版本的mavlink协议时，双方计算得到的校验码会不同，这样不同版本间的mavlink协议就不会在一起正常工作，避免了由于不同版本间通讯时带来的重大潜在问题。
+
+MAVLink帧的介绍如下图所示：
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{./Figure/Mavlink_Frame_Intro.png}
+  \caption{MAVLink Frame介绍}\label{Fig:xd1}
+\end{figure}
+
+在MAVLink消息帧中最重要的两个内容：一个是msgid，一个是payload，前者是payload中内容的编号，后者则存放了消息。消息有许多种类型，在官网的网页中中以蓝色的“#”加数字的方式来表示消息的编号如 “#0”。
+
+由于DJI MSDK协议本身不存在与MAVLink的兼容，因此我们针对于开源项目的MAVLink协议部分进行转换，根据实际项目控制的需要进行适配兼容MAVLink部分协议，并未完全兼容MAVLink支持的所有协议。
+
 \chapter{项目内容}
 
 \section{项目概要}
 
 本项目使用大疆御2行业进阶版无人机作为主体，基于DJI MSDK进行二次开发，对DJI MSDK自有的协议转换为兼容QGC地面站的MAVLink协议，并通过无人机端侧带屏遥控器通过以太网数据链路远程组网传输信息至远端的QGC地面站软件，以及可见光和热成像视频流信息。无人机根据地面站给出的航点信息完成航点飞行，任务结束后，云台自动向下旋转90度，并利用OpenCV计算机视觉库完成自适应阈值+形态学处理+霍夫圆检测，并使用MPC控制算法完成自主视觉引导降落至特定降落目标点。
+
+\section{APP整体框架}
+
+本项目基于开源代码rosettadrone进行二次开发，在Android源代码的基础上单独添加了OpenCV检测框架以及MPC位置控制器设计部分。Rosetta Drone是DJI SDK的Mavlink包装器，允许用户使用Mavlink语言的地面控制站驾驶DJI无人机。从理论上讲，它应该与任何Mavlink GCS一起使用，但到目前为止，所有测试都是使用QGroundControl完成的。
+
+APP集成的功能：
+
+1.在 QGC 中报告遥测数据，如位置、姿态、相对高度、航向和电池剩余电量
+
+2.从 QGC 返回启动的命令
+
+3.在QGC中查看无人机视频源或将RTP转发到您选择的IP地址（目前仅限Mavic Pro 2）
+
+4.创建和飞行航点任务
+
+5.通过操纵杆和 QGS 飞行
+
+6.从 DroneKit 中的 Python 起飞
+
+7.使用Mavproxy同时连接QGC和DroneKit
+
+8.使用 Gstreamer/OpenCV/FFMPEG 和 DroneKit 创建复杂的 AI 功能
+
+飞行任务流程：
+
+1.将无人机配套的带屏遥控器打开，然后打开DJI无人机的电源。
+
+2.启动Rosetta Drone APP。如果应用程序成功与您的无人机通信，右上角的DJI灯将变为绿色。
+
+3.如果需要在外部设备上使用 QGroundControl，单击齿轮图标以访问“设置”，选中“在外部设备上使用 GCS”，然后指定 IP 地址。
+
+4.启动 QGroundControl。应立即建立遥测连接，Rosetta Drone 中的 GCS 指示灯将变为绿色。请注意，如果在与Rosetta无人机相同的设备上使用QGroundControl，则如果QGC在背景中，GCS灯可能不会变为绿色。
+
+5.UDP视频回传步骤：
+
+a.点击QGC左上角的“Q”图标
+
+b.在“视频”下，将“视频源”更改为“UDP 视频流”。
+
+c.将 UDP 端口更改为 5600。
+
+6.为确保飞行安全，建议使用遥控器手动起飞。要从 GCS 解锁并起飞，需要单击“安全启用”按钮。它将变为绿色，并显示“准备飞行”。然后使用 QGroundControl 起飞或启动任务功能。
+
+7.飞行后，确保在接近无人机之前启用安全开关。
 
 \section{OpenCV视觉检测}
 
@@ -335,9 +421,35 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 速率设定点从姿态控制器发送到优化器块。优化器还接收成本函数和系统约束。希尔德雷斯的二次规划程序被用于优化器块，以最小化受预定义的四轴飞行器约束的成本函数。MPC控制器的输出是控制或输入向量，u。在将这个向量发布到DJI虚拟摇杆控制之前，在-1和1之间进行缩放；这种形式的缩放是针对于DJI虚拟摇杆控制的要求。最终将缩放后的向量发送到混控器中用于最终的四旋翼位置控制。
 
+\subsection{MAVLink遥控器端与QGC地面站通信过程}
+
+APP在在连接上地面站后会主动向地面站发送心跳包（HEARTBEATS），飞行器姿态，系统状态，遥控器信号等组成的数据流。各个数据都会以一定的频率发送，比如心跳包一般是1Hz，姿态信息会快些，采用UDP VPN组网连接QGC时的姿态数据发送频率在7-8Hz左右。QGC地面站会在刚连接上遥控器时发送命令，请求飞控传回所有参数，飞控根据自己的情况判断是否接受地面站的请求，并根据不同的命令执行相应的操作，针对于一些特殊命令需要飞控回复地面站确认信号。之后地面站根据用户的操作会发送相应的mavlink消息给飞控，比如设置航点，解锁起飞等。整个通信过程采用半双工方式（在同一时刻只能选择发送或者选择接受数据，不能同时收发数据）。
+
+
+
 \chapter{实验结果}
 
-由于无人机室外飞行存在较大的不确定性，为避免炸机造成损失，我们使用了DJI提供的DJI Assistant 2 for Mavic软件实现了硬件在环仿真（HITL Simulation）。与此同时，我们
+我们使用蒲公英4G VPN室外工业路由器广播5.8G WiFi信号，并WiFi连接带屏遥控器端，并在地面站端侧安装蒲公英客户端，并设置路由器端与地面站软件端连接至同一虚拟网络中，使得地面站端可以与遥控器端侧通过虚拟局域网通信。在此基础上，我们使用QGroundControl开源地面站软件，并在APP中配置MAVLink UDP目的地址IP，端口14550，地面站QGC端配置MAVLink UDP端口同样为14550。连接配置成功后可以在地面端看到对应的电量显示以及信号强度显示。
+
+
+
+由于无人机室外飞行存在较大的不确定性，为避免炸机造成损失，我们使用了DJI提供的DJI Assistant 2 for Mavic软件实现了硬件在环仿真（HITL Simulation）。与此同时，我们在带屏遥控器的APP中集成了基于虚拟摇杆输入控制的DJI Simulator，并实现了APP内的软件在环仿真（SITL Simulation）。
+
+以下为APP的飞行主界面展示：
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{./Figure/APP_Main_Page.png}
+  \caption{APP主界面}\label{Fig:xd1}
+\end{figure}
+
+QGC地面站MAVLink回传显示：
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{./Figure/QGC_Main_Page.png}
+  \caption{APP主界面}\label{Fig:xd1}
+\end{figure}
 
 根据实际的多次项目试飞测试，我们进行了以下的优化处理：
 
@@ -376,3 +488,5 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 未使用卡尔曼滤波器的降落点检测，无人机降落落点精度为：-15cm\~15cm。
 
 通过算法的优化与改进，以及添加了卡尔曼滤波器的最优估计，可以使无人机最终降落精度达到-5cm\~5cm。
+
+（此处插入图片）
