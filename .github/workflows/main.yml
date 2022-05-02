@@ -36,7 +36,7 @@ jobs:
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
-          args: -interaction=nonstopmode -shell-escape
+          args: -f
 
       # Upload a zip containing the PDF file to the workflow tab
       - name: PDF zip file Upload
