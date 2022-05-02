@@ -312,7 +312,7 @@ MAVLink帧的介绍如下图所示：
   \caption{MAVLink Frame介绍}\label{Fig:xd1}
 \end{figure}
 
-在MAVLink消息帧中最重要的两个内容：一个是msgid，一个是payload，前者是payload中内容的编号，后者则存放了消息。消息有许多种类型，在官网的网页中中以蓝色的“#”加数字的方式来表示消息的编号如 “\#0”。
+在MAVLink消息帧中最重要的两个内容：一个是msgid，一个是payload，前者是payload中内容的编号，后者则存放了消息。消息有许多种类型，在官网的网页中中以蓝色的“\#”加数字的方式来表示消息的编号如 “\#0”。
 
 由于DJI MSDK协议本身不存在与MAVLink的兼容，因此我们针对于开源项目的MAVLink协议部分进行转换，根据实际项目控制的需要进行适配兼容MAVLink部分协议，并未完全兼容MAVLink支持的所有协议。
 
@@ -404,7 +404,7 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\linewidth]{./Figure/Kalman_Process.png}
+  \includegraphics[width=0.8\linewidth]{./Figure/Kalman_Filter_Code_Process.jpeg}
   \caption{Kalman滤波器工作流程}\label{Fig:xd1}
 \end{figure}
 
@@ -422,7 +422,7 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 速率设定点从姿态控制器发送到优化器块。优化器还接收成本函数和系统约束。希尔德雷斯的二次规划程序被用于优化器块，以最小化受预定义的四轴飞行器约束的成本函数。MPC控制器的输出是控制或输入向量，u。在将这个向量发布到DJI虚拟摇杆控制之前，在-1和1之间进行缩放；这种形式的缩放是针对于DJI虚拟摇杆控制的要求。最终将缩放后的向量发送到混控器中用于最终的四旋翼位置控制。
 
-\subsection{MAVLink遥控器端与QGC地面站通信过程}
+\section{MAVLink遥控器端与QGC地面站通信过程}
 
 APP在在连接上地面站后会主动向地面站发送心跳包（HEARTBEATS），飞行器姿态，系统状态，遥控器信号等组成的数据流。各个数据都会以一定的频率发送，心跳包发送频率为1Hz，姿态信息频率为7-8Hz，采用UDP VPN组网连接QGC时的姿态数据发送频率在7-8Hz左右。QGC地面站会在刚连接上遥控器时发送命令，请求飞控传回所有参数，飞控根据自己的情况判断是否接受地面站的请求，并根据不同的命令执行相应的操作，针对于一些特殊命令需要飞控回复地面站确认信号。之后地面站根据用户的操作会发送相应的mavlink消息给飞控，比如设置航点，解锁起飞等。整个通信过程采用半双工方式（在同一时刻只能选择发送或者选择接受数据，不能同时收发数据）。
 
@@ -486,7 +486,11 @@ QGC地面站MAVLink回传显示：
 
 根据二值化的阈值参数不同，以及调整霍夫圆检测中的圆心与圆心间的距离，图像中的圆的大小设置，最终将检测效果进行了一些相关优化，以下为最终的降落板识别效果：
 
-（此处插入图片）
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{./Figure/Hough_Circle_Detection.png}
+  \caption{霍夫圆检测效果}\label{Fig:xd1}
+\end{figure}
 
 \section{MPC模型预测控制效果}
 
