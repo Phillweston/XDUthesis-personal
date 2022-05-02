@@ -6,9 +6,13 @@ name: Build LaTeX document
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches:
+    - master
+    - draft
   pull_request:
-    branches: [ master ]
+    branches:
+    - master
+    - draft
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -23,7 +27,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Checkout Source
+        uses: actions/checkout@v3
 
       # Runs a single command using the runners shell
       - name: Github Action for LaTeX
@@ -31,10 +36,12 @@ jobs:
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
+          args: -interaction=nonstopmode -shell-escape
 
       # Upload a zip containing the PDF file to the workflow tab
-      - uses: actions/upload-artifact@v2
+      - name: PDF zip file Upload
+        uses: actions/upload-artifact@v2
         with:
-        name: PDF
-        path: Demo.pdf
+          name: PDF
+          path: Demo.pdf
         
