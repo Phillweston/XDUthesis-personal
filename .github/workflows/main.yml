@@ -35,6 +35,5 @@ jobs:
       # Upload a zip containing the PDF file to the workflow tab
       - uses: actions/upload-artifact@v2
         with:
-        name: PDF
-        path: Demo.pdf
-        
+          name: PDF
+          path: Demo.pdf
