@@ -32,28 +32,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Github Action for LaTeX
-        uses: dante-ev/latex-action@latest
+        uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
-          compiler: xelatex
-          args: -f
-
-      - uses: dante-ev/latex-action@latest
-        with:
-          root_file: Demo.tex
-          compiler: bibtex
-          args: -f
-
-      - uses: dante-ev/latex-action@latest
-        with:
-          root_file: Demo.tex
-          compiler: xelatex
-          args: -f
-
-      - uses: dante-ev/latex-action@latest
-        with:
-          root_file: Demo.tex
-          compiler: xelatex
+          latexmk_use_xelatex: true
           args: -f
 
       # Upload a zip containing the PDF file to the workflow tab
