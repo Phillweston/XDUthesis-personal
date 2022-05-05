@@ -36,21 +36,25 @@ jobs:
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
+          args: -f
 
       - uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
           latexmk_use_bibtex: true
+          args: -f
 
       - uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
+          args: -f
 
       - uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
+          args: -f
 
       # Upload a zip containing the PDF file to the workflow tab
       - name: PDF zip file Upload
