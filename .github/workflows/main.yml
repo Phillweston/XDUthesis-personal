@@ -36,15 +36,18 @@ jobs:
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
-        uses: xu-cheng/latex-action@v2
+
+      - uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
           latexmk_use_bibtex: true
-        uses: xu-cheng/latex-action@v2
+
+      - uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
-        uses: xu-cheng/latex-action@v2
+
+      - uses: xu-cheng/latex-action@v2
         with:
           root_file: Demo.tex
           latexmk_use_xelatex: true
