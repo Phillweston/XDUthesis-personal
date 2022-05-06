@@ -1,20 +1,30 @@
 %!TEX root = ../Demo.tex
 % 中文摘要
 \begin{abstract}
-  本课题利用DJI御2 行业进阶版无人机，使用DJI MSDK接口，利用无人机端侧遥控器通过以太网数据链路远程组网传输MAVLink协议帧信息至远端的自研地面站软件。无人机根据地面站给出的航点信息自主规划最优航线，航线结束后视觉识别降落点并使用基于MPC控制引导降落至特定降落目标点。
-  
-  本课题任务为：
-  1. 实现视频流压缩与编解码，并基于第三方 VPN 组网技术组建虚拟局域网，通过 RTMP 流视频协议实时传输双光吊舱视频，通过 MAVLink 协议传输无人机相关状态信息和控制指令。
-  2. 使用 OpenCV，在无人机的带屏遥控器端基于阈值+边缘检测+霍夫圆检测实现地面端H橙黄色降落点检测，并并通过调用无人机的机载 IMU 和气压计等传感器信息，使用MPC模型预测控制代替传统PID算法完成降落自动控制，从而实现视觉引导自主降落。
+在过去的十年中，四旋翼飞行器的受欢迎程度稳步上升。它们被用于军事、消防和救援巡检等领域，并随着公众的普及，逐渐进入民用级、消费级市场。
+
+目前以DJI为主的商业公司已具备完善的软硬件体系，但由于其商业性质较浓厚，缺乏对于开源协议和开源地面站的兼容。与此同时，Ardupilot和PX4作为飞控开源界最大的两个项目，采用QGroundControl作为地面站软件并通过\textbf{MAVLink协议}实现空地间的数据传输。因此，市面上迫切需要一种解决方案将开源地面站的相关功能与DJI飞行器MSDK接口进行结合，并通过MAVLink协议开放其飞行控制接口。
+
+\textbf{卡尔曼滤波器(KF)}作为目前较为优秀的滤波和最优估计算法，能通过对物体位置的观察序列，预测出物体的位置的坐标及速度，尤其是对于线性高斯系统的状态估计问题。在飞行器姿态最优估计、滤波优化、目标追踪等领域具有广泛的应用。通过卡尔曼滤波器对于检测后的降落坐标点进行最优估计，最大程度上降低了因误识别或扰动等导致的降落坐标误差，提升了飞行器的降落精准性。
+
+传统的基于\textbf{比例、积分、微分(PID)}的控制器存在控制超调、振荡等因素，并且控制效果随着飞行器的负载和外界扰动的变化而变化，无法针对于某种特定的控制对象设计一种特定数学模型，难以进一步飞行器的控制鲁棒性。\textbf{模型预测控制(MPC)}做为替代方案，它能够通过最小化参考值和预测输出之间的误差来生成控制系统所需的输入序列，从而根据特定的飞行器的数学模型设计特定的控制模型，从根本上避免了PID的超调、振荡的问题，显著地提升了控制的鲁棒性。
+
+为了实现无人机的特定目标的自主巡检以及特定热像目标的采集与数据获取，并结合开源地面站的功能，本课题利用DJI御2 行业进阶版无人机，使用\textbf{DJI MSDK接口}，利用无人机端侧遥控器通过VPN以太网数据链路远程组网传输MAVLink协议帧信息至远端的QGC地面站软件。无人机根据地面站给出的航点信息自主规划最优航线，航线结束后视觉识别降落点并使用卡尔曼滤波器得到最优估计后的降落点坐标，进一步基于MPC控制引导降落至特定降落目标点。
+
 \end{abstract}
-\keywords{MPC Control, DJI MSDK, MAVLink, 目标检测}
+\keywords{MPC控制, DJI MSDK, MAVLink, 目标检测}
 
 % 英文摘要
 \begin{enabstract}
-  This project uses the DJI Royal 2 Industry Advanced Edition UAV, uses the DJI MSDK interface, and uses the UAV end-side remote control to remotely network to transmit MAVLink protocol frame information to the remote end of the self-developed ground station software through the Ethernet data link. The UAV independently plans the optimal route according to the waypoint information given by the ground station, visually identifies the landing point after the end of the route and uses MPC-based control to guide the landing to a specific landing target point.
+Over the past decade, the popularity of quadcopters has steadily increased. They are used in the fields of military, fire and rescue inspection, and gradually enter the civilian and consumer markets with the popularity of the public.
+
+At present, commercial companies based on DJI have a perfect software and hardware system, but due to their strong commercial nature, they lack compatibility with open source protocols and open source ground stations. At the same time, Ardupilot and PX4, as the two largest projects in the open source industry of flight control, use QGroundControl as ground station software and achieve data transmission between air and ground through the \textbf{MAVLink protocol}. Therefore, there is an urgent need for a solution that combines the relevant functions of open source ground stations with the MSDK interface of DJI aircraft and opens up its flight control interface through the MAVLink protocol.
   
-  The tasks of this project are:
-  1. Realize video stream compression and codec, and form a virtual local area network based on third-party VPN networking technology, transmit dual-optical pod video in real time through RTMP streaming video protocol, and transmit UAVs-related status information and control instructions through MAVLink protocol.
-  2. Using OpenCV, the screen remote control of the UAV is based on threshold + edge detection + Hof circle detection to achieve H orange-yellow landing point detection at the ground end, and by calling the UAV's airborne IMU and barometer and other sensor information, the MPC model predictive control is used instead of the traditional PID algorithm to complete the landing automatic control, so as to achieve visual guidance for autonomous landing.
+As one of the best filtering and optimal estimation algorithms, \textbf{Kalman Filter (KF)} can predict the coordinates and velocity of objects' positions through the observation sequence of object positions, especially for state estimation problems of linear Gaussian systems. It has a wide range of applications in the fields of aircraft attitude optimal estimation, filter optimization, target tracking and so on. The Kalman filter is used to optimally estimate the landing coordinate point after detection, which minimizes the error of landing coordinates caused by misidentification or disturbance, and improves the landing accuracy of the aircraft.
+  
+The traditional \textbf{PID-based} controller has control overshoot, oscillation and other factors, and the control effect changes with the load of the aircraft and the change of external disturbances, and it is impossible to design a specific mathematical model for a specific control object, and it is difficult to further the control robustness of the aircraft. \textbf{Model Predictive Control (MPC)} as an alternative, it can minimize the error between the reference value and the prediction output to generate the input sequence required by the control system, so as to design a specific control model according to the mathematical model of a specific aircraft, fundamentally avoid the problem of overshoot and oscillation of PID, and significantly improve the robustness of the control.
+  
+In order to achieve the autonomous inspection of the specific target of the UAV and the acquisition and data acquisition of the specific thermal image target, and combined with the function of the open source ground station, this project uses the DJI Royal 2 Industry Advanced UAV, using the \textbf{DJI MSDK interface}, using the UAV end-side remote control to remotely network through the VPN Ethernet data link to transmit the MAVLink protocol frame information to the remote QGC ground station software. The UAV independently plans the optimal route according to the waypoint information given by the ground station, visually identifies the landing point after the end of the route and uses the Kalman filter to obtain the optimal estimated landing point coordinates, and further guides the landing to a specific landing target point based on MPC control.
+
 \end{enabstract}
 \enkeywords{MPC Control, DJI MSDK, MAVLink, Object Detection}
