@@ -26,7 +26,7 @@
   \caption{Dronecode软硬件平台展示}\label{Fig:imgx}
 \end{figure}
 
-Ardupilot与PX4在一些关键算法上是相互借鉴的，因此算法先进程度差不多。PX4由于起步晚，历史包袱少，最初就搭建了一个很先进的架构，因此获得了代码简洁易懂易懂的优势。该开源系统在国内外影响力较大，除多旋翼外同样支持固定翼、垂直起降等机型。支持MAVLink微型空中飞行器链路通讯协议。
+\textbf{Ardupilot}与\textbf{PX4}在一些关键算法上是相互借鉴的，因此算法先进程度差不多。PX4由于起步晚，历史包袱少，最初就搭建了一个很先进的架构，因此获得了代码简洁易懂易懂的优势。该开源系统在国内外影响力较大，除多旋翼外同样支持固定翼、垂直起降等机型。支持MAVLink微型空中飞行器链路通讯协议。
 
 3.\textbf{STM32/TI-嵌入式芯片飞控平台}。该系列以匿名、无名飞控为主，最初是由大学生创业团队设计并开发的，具有光流定位、GPS定点等功能。只支持多旋翼系列机型，并且由于其配套地面站程序较为简易，主要适用于教学实验等领域，不适用于商业等对稳定性要求较高的环境中。对于某些特殊的机型，部分兼容MAVLink微型空中飞行器链路通讯协议。
 
@@ -101,7 +101,7 @@ OpenCV实现形态学运算的函数为：morphologyEx
 
 $d=x \cos \theta+y \sin \theta, \quad d \geqslant 0,0 \leqslant \theta<\pi$
 
-右边的图意思是在一个点上，不同的$\theta$对应不同的$\rho$，$\theta$是穿过该点的直线的斜率，$\rho$是穿过该点的直线与原点的距离。这样穿过每个点作无数条直线，参数$\rho$和$\theta$就能绘出一个正弦图像。 ⽽如果1,2,3在一条直线上就可以找到⼀个$\theta$使得过1，2，3点的直线的$\rho$很接近。也就是有图上相交的过程。而通常使用的方法是累加法，求得累加次数最多的$(\theta, \rho)$从而确定这条直线。
+右边的图意思是在一个点上，不同的$\theta$对应不同的$\rho$，$\theta$是穿过该点的直线的斜率，$\rho$是穿过该点的直线与原点的距离。这样穿过每个点作无数条直线，参数$\rho$和$\theta$就能绘出一个正弦图像。而如果1,2,3在一条直线上就可以找到⼀个$\theta$使得过1,2,3点的直线的$\rho$很接近。也就是有图上相交的过程。而通常使用的方法是累加法，求得累加次数最多的$(\theta, \rho)$从而确定这条直线。
 
 4.\textbf{霍夫变换用于圆检测}
 
@@ -285,13 +285,13 @@ $$
 J=\sum_{k=0}^{N-1} x(k+i \mid k)^{T} Q x(k+i \mid k)+u(k+i \mid k)^{T} R u(k+i \mid k)+x(k+N \mid k)^{T} F x(k+i \mid k)
 $$
 
-Q、R、F表示对应输入输出的权重系数矩阵
+Q、R、F表示对应输入输出的\textbf{权重系数矩阵}
 
 Q矩阵影响x变量的相关性，R矩阵跟输入相关，F矩阵跟终值相关
 
 $x(k+N \mid k)^{T} F x(k+i \mid k)$与系统对应的终值状态相关
 
-简化上面的cost function矩阵
+简化上面的\textbf{代价函数（cost function）矩阵}
 
 $$
 J=\boldsymbol{x}(k)^{T} \boldsymbol{G} \boldsymbol{x}(k)+\boldsymbol{U}(k)^{T} \boldsymbol{H} \boldsymbol{U}(k)+2 \boldsymbol{x}(k)^{T} \boldsymbol{E} \boldsymbol{U}(k)
@@ -355,7 +355,7 @@ MAVLink帧的介绍如图\ref{Fig:img8}所示。
 
 \section{算法概要}
 
-本项目使用大疆御2行业进阶版无人机作为主体，基于DJI MSDK进行二次开发，对DJI MSDK自有的协议转换为兼容QGC地面站的MAVLink协议，并通过无人机端侧带屏遥控器通过以太网数据链路远程组网传输信息至远端的QGC地面站软件，以及可见光和热成像视频流信息。无人机根据地面站给出的航点信息完成航点飞行，任务结束后，云台自动向下旋转90度，并利用OpenCV计算机视觉库完成自适应阈值+形态学处理+霍夫圆检测，并使用MPC控制算法完成自主视觉引导降落至特定降落目标点。
+本项目使用\textbf{大疆御2行业进阶版无人机}作为主体，基于DJI MSDK进行二次开发，对DJI MSDK自有的协议转换为兼容QGC地面站的MAVLink协议，并通过无人机端侧带屏遥控器通过以太网数据链路远程组网传输信息至远端的QGC地面站软件，以及可见光和热成像视频流信息。无人机根据地面站给出的航点信息完成航点飞行，任务结束后，云台自动向下旋转90度，并利用OpenCV计算机视觉库完成自适应阈值+形态学处理+霍夫圆检测，并使用MPC控制算法完成自主视觉引导降落至特定降落目标点。
 
 \section{APP整体框架}
 
@@ -445,6 +445,8 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 \section{MPC位置控制}
 
+1.MPC控制器设计
+
 我们提出的四轴飞行器模型预测器位置控制如下图\ref{Fig:img10}方框中
 
 \begin{figure}[ht]
@@ -456,6 +458,288 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 在MPC控制中，每个优化回路开始前，使用四轴飞行器状态空间模型来增强当前的角速率（这里由于MSDK API设定，认为角速率近似等于对应的虚拟摇杆控制的速率，我们使用虚拟摇杆进行控制）。这样做是为了获得更精确的四轴飞行器状态预测并用于优化器。使用这种方法可以确保在建模过程中做出的模型的不确定性和假设得到补偿\cite{ArtE1}。
 
 速率设定点从姿态控制器发送到优化器块。优化器还接收成本函数和系统约束。希尔德雷斯的二次规划程序被用于优化器块，以最小化受预定义的四轴飞行器约束的成本函数。MPC控制器的输出是控制或输入向量u。在将这个向量发布到DJI虚拟摇杆控制之前，在-1和1之间进行缩放；这种形式的缩放是针对于DJI虚拟摇杆控制的要求。最终将缩放后的向量发送到混控器中用于最终的四旋翼位置控制\cite{ArtE9}。
+
+2.飞行器运动学模型
+
+我们区分两个主框架——\textbf{惯性框架（ENU Frame）}和\textbf{身体框架（Body Frame）}，如图\ref{Fig:img-append10}所示。惯性坐标系在这里给出了\textbf{东-北-上（ENU）}坐标，并且身体框架以\textbf{向前 - 左 - 向上（FLU）}坐标给出。选择此约定是因为它是SDK中提供的约定。因此，数据是已经在此参考框架中交付。有关四轴飞行器SDK的更多详细信息，请参阅DJI MSDK相关文档说明。偏航角$\psi$定义为无人机的前向一侧和东面。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{./Figure/Drone_Coordinate_System.png}
+  \caption{飞行器坐标系}\label{Fig:img-append10}
+\end{figure}
+
+刚体坐标系与惯性坐标系之间的关系可以用\textbf{旋转矩阵（Rotation Matrix）}表示
+
+$$
+\boldsymbol{R}_{i b}=\left[\begin{array}{ccc}
+\cos \psi \cos \theta & \cos \psi \sin \varphi \sin \theta-\sin \psi \cos \varphi & \cos \psi \cos \varphi \sin \theta+\sin \psi \sin \varphi \\
+\sin \psi \cos \theta & \sin \psi \sin \varphi \sin \theta+\cos \psi \cos \varphi & \sin \psi \cos \varphi \sin \theta-\cos \psi \sin \varphi \\
+-\sin \theta & \sin \varphi \cos \theta & \cos \varphi \cos \theta
+\end{array}\right]
+$$
+
+其中$\varphi, \theta$和$\psi$分别代表滚转角，俯仰角和偏航角。
+
+3.飞行器动力学模型
+
+作用在四轴飞行器上的力和力矩是来自四个转子叶片的重力、阻力和推力，以及来自风等的外部干扰的结果。总推力是在飞行器框架中的负z方向上定向的，并且是来自四个单独电机的推力的总和。在惯性系中，总力可以表示为
+
+$$
+\left(\begin{array}{l}
+F_{x} \\
+F_{y} \\
+F_{z}
+\end{array}\right)=-\left[\begin{array}{c}
+0 \\
+0 \\
+m g
+\end{array}\right]+\boldsymbol{R}_{i b}\left[\begin{array}{c}
+0 \\
+0 \\
+\sum_{k=1}^{4} T_{k}
+\end{array}\right]+\boldsymbol{F}_{d r a g}+\boldsymbol{F}_{\text {ext }},
+$$
+
+其中g是重力加速度，$F_{drag}$是来自阻力的力，而$F_{ext}$包含了所有的外力，例如由于风。假设阻力与各自方向上的速度成正比。最低水平的控制输入是提供给四个电机的单独电源。为了简单和安全，有一个内置的姿态控制系统，用于计算单个电机的推力指令。现在，控制输入是命令滚动角$\varphi_{cmd}$、俯仰角$\theta_{cmd}$、偏航率$\dot{\varphi}_{cmd}$和垂直速度$\omega_{cmd}$。假设垂直速度$\omega$对垂直速度命令的名义响应为一阶系统的形式，表示为拉普拉斯传递函数
+
+$$
+W(s)=\frac{k_{w}}{\tau_{w} s+1} W_{c m d}(s)
+$$
+
+其中，$\omega(t)$为惯性系中的垂直速度。这意味着t时刻的总推力可以表示为
+
+$$
+T(t)=\frac{g+\dot{w}(t)}{\cos \theta(t) \cos \varphi(t)}=\frac{g+1 / \tau_{w}\left(k_{w} w_{c m d}(t)-w(t)\right)}{\cos \theta(t) \cos \varphi(t)}
+$$
+
+姿态动力学近似为二阶系统。对于滚动和俯仰，从命令到姿态的传递函数以拉普拉斯传递函数的形式表示为
+
+$$
+\Phi(s)=\frac{k_{\phi} \omega_{\phi}^{2}}{s^{2}+2 \xi_{\phi} \omega_{\phi} s+\omega_{\phi}^{2}} \Phi_{c m d}(s)
+$$
+
+$$
+\Theta(s)=\frac{k_{\theta} \omega_{\theta}^{2}}{s^{2}+2 \xi_{\theta} \omega_{\theta} s+\omega_{\theta}^{2}} \Theta_{c m d}(s)
+$$
+
+各自地对于偏航运动，速率控制被建模为
+
+$$
+\Psi(s)=\frac{1}{s} \frac{k_{\psi}}{\tau_{\psi} s+1} \dot{\Psi}_{c m d}(s)
+$$
+
+现在，这些动态模型可以总结为
+
+$$
+\begin{aligned}
+\dot{\boldsymbol{p}}(t) &=\boldsymbol{v}(t) \\
+\dot{\boldsymbol{v}}(t) &=-\boldsymbol{g}+\boldsymbol{R}_{i b}(t) \boldsymbol{T}(t)-\boldsymbol{D} \boldsymbol{v}(t)+\frac{1}{m} \boldsymbol{F}_{e x t}(t) \\
+\dot{\boldsymbol{\theta}}(t) &=\boldsymbol{\omega}(t) \\
+\dot{\boldsymbol{\omega}}(t) &=f_{\omega}\left(\boldsymbol{\omega}(t), \boldsymbol{\theta}(t), \boldsymbol{\theta}_{c m d}(t)\right)
+\end{aligned}
+$$
+
+其中$p$表示位置，$v$表示速度，$a$表示加速度，$\theta$表示姿态，$\omega$表示角加速度。函数$f_{\omega}$由上述方程给出。可以看出，该模型仅在速度导数上是非线性的，其中输入项$R_{ib}T$由以下向量给出
+
+$$
+\boldsymbol{R}_{i b} \boldsymbol{T}=(g+\dot{w})\left[\begin{array}{c}
+\frac{\cos \psi \cos \varphi \sin \theta+\sin \psi \sin \varphi}{\cos \theta \cos \varphi} \\
+\frac{\sin \psi \cos \varphi \sin \theta-\cos \psi \sin \varphi}{\cos \theta \cos \varphi} \\
+1
+\end{array}\right]=(g+\dot{w})\left[\begin{array}{c}
+\cos \psi \tan \theta+\frac{\sin \psi \tan \varphi}{\cos \theta} \\
+\sin \psi \tan \theta-\frac{\cos \psi \tan \varphi}{\cos \theta} \\
+1
+\end{array}\right]
+$$
+
+对于飞行器的每一步控制时间段内，假设角度$\psi$和$\theta$很小，这可以近似为
+
+$$
+\boldsymbol{R}_{i b} \boldsymbol{T} \approx(g+\dot{w})\left[\begin{array}{c}
+\cos \psi \cdot \theta+\sin \psi \cdot \varphi \\
+\sin \psi \cdot \theta-\cos \psi \cdot \varphi \\
+1
+\end{array}\right]
+$$
+
+系统方程在状态空间形式上表示如下
+
+$$
+\frac{d}{d t}\left[\begin{array}{l}
+p_{x} \\
+p_{y} \\
+p_{z}
+\end{array}\right]=\left[\begin{array}{lll}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{c}
+u \\
+v \\
+w
+\end{array}\right]
+$$
+
+$$
+\begin{aligned}
+\frac{d}{d t}\left[\begin{array}{c}
+u \\
+v \\
+w
+\end{array}\right]=&-\left[\begin{array}{l}
+0 \\
+0 \\
+g
+\end{array}\right]-\left[\begin{array}{ccc}
+k_{d x} & 0 & 0 \\
+0 & k_{d y} & 0 \\
+0 & 0 & k_{d z}
+\end{array}\right]\left[\begin{array}{c}
+u \\
+v \\
+w
+\end{array}\right]+\frac{1}{m}\left[\begin{array}{lll}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{l}
+F_{1} \\
+F_{2} \\
+F_{3}
+\end{array}\right] \\
++& {\left[\begin{array}{c}
+\cos \psi \tan \theta+\frac{\sin \psi \tan \varphi}{\cos \theta} \\
+\sin \psi \tan \theta-\frac{\cos \psi \tan \varphi}{\cos \theta}
+\end{array}\right](g+\dot{w}) }
+\end{aligned}
+$$
+
+$$
+\frac{d}{d t}\left[\begin{array}{l}
+\varphi \\
+\theta \\
+\psi
+\end{array}\right]=\left[\begin{array}{lll}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{array}\right]\left[\begin{array}{l}
+\omega_{1} \\
+\omega_{2} \\
+\omega_{3}
+\end{array}\right]
+$$
+
+$$
+\begin{aligned}
+\frac{d}{d t}\left[\begin{array}{l}
+\omega_{1} \\
+\omega_{2} \\
+\omega_{3}
+\end{array}\right]=-\left[\begin{array}{ccc}
+\omega_{\phi}^{2} & 0 & 0 \\
+0 & \omega_{\theta}^{2} & 0 \\
+0 & 0 & 0
+\end{array}\right]\left[\begin{array}{l}
+\phi \\
+\theta \\
+\psi
+\end{array}\right]-\left[\begin{array}{ccc}
+2 \omega_{\phi} \xi_{\phi} & 0 & 0 \\
+0 & 2 \omega_{\theta} \xi_{\theta} & 0 \\
+0 & 0 & 1 / \tau_{\psi}
+\end{array}\right]\left[\begin{array}{l}
+\omega_{1} \\
+\omega_{2} \\
+\omega_{3}
+\end{array}\right] \\
++ {\left[\begin{array}{ccc}
+k_{\phi} \omega_{\phi}^{2} & 0 & 0 \\
+0 & k_{\theta} \omega_{\theta}^{2} & 0 \\
+0 & 0 & k_{\psi} / \tau_{\psi}
+\end{array}\right]\left[\begin{array}{c}
+\varphi_{c m d} \\
+\theta_{c m d} \\
+\psi_{c m d}
+\end{array}\right] . }
+\end{aligned}
+$$
+
+4.降落点约束
+
+在着陆过程中需要满足的相对位置有一些限制。第一个约束与接近的方向有关。因为我们不希望飞行器离降落板太远，而且由于降落板附近的地形存在一定的不确定性，我们制定了一个空间约束，迫使飞行器从大约上方接近降落板，这种非凸约束可以表示为：
+
+$$
+\begin{array}{r}
+\boldsymbol{A}\left[\begin{array}{c}
+\Delta x(t) \\
+\Delta y(t) \\
+h(t)
+\end{array}\right] \geq \boldsymbol{k}-M \boldsymbol{f}_{b}(b(t)) \\
+\boldsymbol{B} b(t) \leq \mathbf{1}
+\end{array}
+$$
+
+矩阵$\boldsymbol{A} \in \mathbb{R}^{k \times 3}$和向量$\boldsymbol{k} \in \mathbb{R}^{k}$一起描述区域的形状的平面不等式的形式，和$\boldsymbol{f}_{b}(b) \in {0,1}$是一个二进制向量值函数表明约束是活跃在一个给定的时间。此外，$M$被选择为一个足够大的常数。
+
+根据实际降落地形需要，这里的降落控制区域被选择为一个有六个边的多面体。对于边坡度的任意定义表示为
+
+$$
+\left[\begin{array}{ccc}
+-h_{s} & 0 & \left(d_{x_{1}}-d_{l}\right) \\
+h_{s} & 0 & \left(-d_{x_{2}}-d_{l}\right) \\
+0 & -h_{s} & \left(d_{y_{1}}-d_{l}\right) \\
+0 & h_{s} & \left(-d_{y_{2}}-d_{l}\right) \\
+0 & 0 & 1 \\
+0 & 0 & -1
+\end{array}\right]\left[\begin{array}{c}
+\Delta x(t) \\
+\Delta y(t) \\
+h(t)
+\end{array}\right] \geq\left[\begin{array}{c}
+d_{l} h_{s} \\
+-d_{l} h_{s} \\
+d_{l} h_{s} \\
+-d_{l} h_{s} \\
+h_{s} \\
+0
+\end{array}\right]
+$$
+
+除了这个空间约束外，我们还对着陆时的垂直速度进行了约束，表示为
+
+$$
+\begin{aligned}
+&w(t) \geq w_{\min } \\
+&w(t) \geq k_{1} h(t)+w_{\min , \text { land }}
+\end{aligned}
+$$
+
+其中$\omega_{min,land}<0$为降落的极限速度，$k_{1}<0$为一个常量。
+
+5.飞行器相关测试参数
+
+我们采用的DJI御2行业进阶版飞行器相关参数如表\ref{Fig:table1}所示
+
+\begin{table}[ht]
+  \centering
+  $$
+  \begin{array}{|c|c|}
+    \hline \multicolumn{2}{|c|}{\text { Quadcopter Parameters }} \\
+    \hline \text { Mass, } m & 0.909 \mathrm{~kg} \\
+    \text { Moment arm, } d & 0.203 \mathrm{~m} \\
+    \text { Thrust coefficient, } b & 3.0587 \times 10^{-7} \mathrm{~N} / \mathrm{rpm}^{2} \\
+    \text { Drag coefficient, } k & 5.4270 \times 10^{-9} \mathrm{Nm} / \mathrm{rpm}^{2} \\
+    \text { Moment of inertia about x-axis, } I_{x x} & 0.0208 \mathrm{kgm}^{2} \\
+    \text { Moment of inertia about y-axis, } I_{y y} & 0.0194 \mathrm{kgm}^{2} \\
+    \text { Moment of inertia about z-axis, } I_{z z} & 0.0252 \mathrm{kgm}^{2} \\
+    \hline
+  \end{array}
+  $$
+  \caption{DJI御2行业进阶版飞行器相关参数}\label{Fig:table1}
+\end{table}
 
 \section{MAVLink协议QGC地面站通信过程}
 
@@ -477,11 +761,11 @@ MAVLink支持多种飞行模式，比如manual（手动）模式、auto（自动
   \caption{MAVLink 飞行模式图}\label{Fig:img12}
 \end{figure}
 
-这里由于我们使用QGC地面站外部控制航点飞行，因此我们选用guided模式作为地面站控制模式。
+这里由于我们使用QGC地面站外部控制航点飞行，因此我们选用\textbf{Guided模式}作为地面站控制模式。
 
 \chapter{APP算法实现与测试}
 
-我们使用蒲公英4G VPN室外工业路由器广播5.8G WiFi信号，并WiFi连接带屏遥控器端，并在地面站端侧安装蒲公英客户端，并设置路由器端与地面站软件端连接至同一虚拟网络中，使得地面站端可以与遥控器端侧通过虚拟局域网通信。在此基础上，我们使用QGroundControl开源地面站软件，并在APP中配置MAVLink UDP目的地址IP，端口14550，地面站QGC端配置MAVLink UDP端口同样为14550，如图\ref{Fig:img13}所示.
+我们使用\textbf{蒲公英4G VPN室外工业路由器}广播5.8G WiFi信号，并WiFi连接带屏遥控器端，并在地面站端侧安装蒲公英客户端，并设置路由器端与地面站软件端连接至同一虚拟网络中，使得地面站端可以与遥控器端侧通过虚拟局域网通信。在此基础上，我们使用QGroundControl开源地面站软件，并在APP中配置MAVLink UDP目的地址IP，端口14550，地面站QGC端配置MAVLink UDP端口同样为14550，如图\ref{Fig:img13}所示.
 
 \begin{figure}[ht]
   \centering
@@ -499,7 +783,7 @@ QGC地面站MAVLink回传显示\ref{Fig:img15}
   \caption{QGC主界面}\label{Fig:img15}
 \end{figure}
 
-由于无人机室外飞行存在较大的不确定性，为避免炸机造成损失，我们使用了DJI提供的DJI Assistant 2 for Mavic软件实现了硬件在环仿真（HITL Simulation）。与此同时，我们在带屏遥控器的APP中集成了基于虚拟摇杆输入控制的DJI Simulator，并实现了APP内的软件在环仿真（SITL Simulation）。
+由于无人机室外飞行存在较大的不确定性，为避免炸机造成损失，我们使用了DJI提供的DJI Assistant 2 for Mavic软件实现了\textbf{硬件在环仿真（HITL Simulation）}。与此同时，我们在带屏遥控器的APP中集成了基于虚拟摇杆输入控制的DJI Simulator，并实现了APP内的\textbf{软件在环仿真（SITL Simulation）}。
 
 根据实际的多次项目试飞测试，我们进行了以下的优化处理：
 
@@ -509,7 +793,7 @@ QGC地面站MAVLink回传显示\ref{Fig:img15}
 
 \section{OpenCV视觉检测效果}
 
-原始1080P H.264编码格式的视频逐帧处理所需时间在100ms~150ms之间，帧率约为6.7fps~10fps，难以满足实时检测的要求，而且由于该帧率下对应的控制频率在5Hz~10Hz之间，相较于期望控制频率20Hz~30Hz较低，使用PID+MPC算法进行xy位置控制存在较大的肉眼可见的比例控制振荡现象，因此我们将分辨率由1920x1080等比缩小并降低至568x320，此时的检测帧率可提升至25fps~35fps，对应的控制频率可提升至20Hz~30Hz，该控制频率下无人机的xy位置控制振荡现象明显减少，而且控制过程更为柔和。
+原始1080P H.264编码格式的视频逐帧处理所需时间在100ms~150ms之间，帧率约为6.7fps~10fps，难以满足实时检测的要求，而且由于该帧率下对应的控制频率在5Hz~10Hz之间，相较于期望控制频率20Hz~30Hz较低，使用MPC算法进行xy位置控制存在较大的肉眼可见的控制滞后现象，因此我们将分辨率由1920x1080等比缩小并降低至568x320，此时的检测帧率可提升至25fps~35fps，对应的控制频率可提升至20Hz~30Hz，该控制频率下无人机的xy位置控制振荡现象明显减少，而且控制过程更为柔和。
 
 根据二值化的阈值参数不同，以及调整霍夫圆检测中的圆心与圆心间的距离，图像中的圆的大小设置，最终将检测效果进行了一些相关优化，最终的降落板识别效果如图\ref{Fig:img16}所示。
 
@@ -540,15 +824,19 @@ $$
 变量$\dot{\phi}$、$\dot{\theta}$和$\dot{\psi}$是滚动、俯仰和偏航的角速率轴分别以弧度/秒为单位测量，t是模拟时间步长，其为
 边界在0和20之间；增量为0.2。
 
-下表显示了MATLAB模拟需要初始化的参数，其中$\left[\begin{array}{lll}p & q & r\end{array}\right]^{T}=\left[\begin{array}{lll}\dot{\phi} & \dot{\theta} & \dot{\psi}\end{array}\right]^{T}$，$n_{u}=3, n_{y}=6$
+表\ref{Fig:table2}显示了MATLAB模拟需要初始化的参数，其中$\left[\begin{array}{lll}p & q & r\end{array}\right]^{T}=\left[\begin{array}{lll}\dot{\phi} & \dot{\theta} & \dot{\psi}\end{array}\right]^{T}$，$n_{u}=3, n_{y}=6$
 
-\begin{tabular}{|c|c|c|c|c|}
-  \hline$n_{u}$ & $n_{y}$ & $\mathbf{p}, \mathbf{q}$ & $\mathbf{r}$ & disturbance \\
-  \hline 3 & 6 & $\operatorname{sint}+\frac{\cos (3 t)}{2}$ & $\operatorname{sint}+\frac{\cos (2 t)}{2}+\frac{\sin (3 t)}{3}$ & $(\operatorname{rand}(3,101) * 2-1) * 0.5$ \\
-  \hline
-\end{tabular}
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline$n_{u}$ & $n_{y}$ & $\mathbf{p}, \mathbf{q}$ & $\mathbf{r}$ & disturbance \\
+    \hline 3 & 6 & $\operatorname{sint}+\frac{\cos (3 t)}{2}$ & $\operatorname{sint}+\frac{\cos (2 t)}{2}+\frac{\sin (3 t)}{3}$ & $(\operatorname{rand}(3,101) * 2-1) * 0.5$ \\
+    \hline
+  \end{tabular}
+  \caption{MATLAB模拟需要初始化的参数}\label{Fig:table2}
+\end{table}
 
-为了验证MPC模型预测控制的效果，我们通过最小化过程通过封装Hildreth的二次规划函数和状态空间模型参数来减缓，在向混控器模块输出输入（或扭矩）命令之前至少运行两次。运行三次循环导致四轴飞行器在起飞后偏离航线，随后坠毁。然而，一个带有两次迭代的循环导致了通过每个任务路径点的相对平稳的飞行，并且任务以一个安全着陆结束。
+为了验证MPC模型预测控制的效果，我们通过最小化过程通过封装\textbf{Hildreth的二次规划函数}和\textbf{状态空间模型}参数来减缓，在向混控器模块输出输入（或扭矩）命令之前至少运行两次。运行三次循环导致四轴飞行器在起飞后偏离航线，随后出现控制不稳定。然而，一个带有两次迭代的循环导致了通过每个任务路径点的相对平稳的飞行，并且任务以一个安全着陆结束。
 
 上一步使用MATLAB完成了控制器设计与仿真测试，在此基础上使用DJI Simulation完成软件在环仿真与硬件在环仿真测试，并实现实际飞行测试，步骤如图\ref{Fig:img16_add}所示。
 
@@ -558,7 +846,9 @@ $$
   \caption{MPC控制步骤}\label{Fig:img16_add}
 \end{figure}
 
-图\ref{Fig:img17}和\ref{Fig:img18}为MPC控制的滚转速率(roll rate)和俯仰速率(pitch rate)曲线，绘制的飞行数据中使用的控制视野和预测视野分别为2和4。
+实际测试中，我们不同类型的扰动进行了扰动补偿测试，主要表现为作用于四轴飞行器上的阵风以及由于降落点检测误差等导致的极少数错误的降落点坐标。DJI Simulator导出的结果显示，在大约距离地面10m时，飞行器会暂时减缓下降速度，以使其更好地对齐降落板，以便垂直速度更好地匹配。然后，当无人机继续下降时，它以一个安全的相对垂直速度着陆，使用估计的上升运动作为飞行高度的参考。该仿真结果说明了该控制器在静态干扰下的工作原理。
+
+图\ref{Fig:img17}和\ref{Fig:img18}为MPC控制的\textbf{滚转速率(roll rate)}和\textbf{俯仰速率(pitch rate)}曲线，绘制的飞行数据中使用的控制视野和预测视野分别为2和4。
 
 \begin{figure}[ht]
   \centering
@@ -612,4 +902,4 @@ MAVLink作为兼容开源界多种飞行器构型的轻小型化飞行器通讯�
 
 在上一章中提出了基于DJI飞行器与QGC地面站的通信可行性，以及基于OpenCV传统算法+卡尔曼滤波器对于降落点最优估计，MPC模型预测位置控制的应用。考虑到未来的进一步的行业化应用，我们将会使用DJI经纬M300/M30T等可拓展的行业化飞行器进行进一步的开发与适配。同时，针对于目前的MAVLink的协议内容和数据传输稳定性等问题，我们也会进一步开发与不断完善。
 
-目前我们的项目重点在APP的开发上面，未来我们将基于现有的成果进行相关拓展，在DJI Onboard SDK板载端基于ROS开发相关的协议转换以及飞行控制、视觉识别等内容。另外，针对于目前DJI带屏遥控器的性能相关问题，未来我们也将通过集成高性能CPU/GPU/SoC等嵌入式开发板至飞行器平台上，提高机载端运算效率。
+目前我们的项目重点在APP的开发上面，未来我们将基于现有的成果进行相关拓展，在\textbf{DJI Onboard SDK板载端}基于ROS开发相关的协议转换以及飞行控制、视觉识别等内容。另外，针对于目前DJI带屏遥控器的性能相关问题，未来我们也将通过集成高性能CPU/GPU/SoC等嵌入式开发板至飞行器平台上，提高机载端运算效率。
