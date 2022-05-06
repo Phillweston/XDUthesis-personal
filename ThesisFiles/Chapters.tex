@@ -99,7 +99,9 @@ OpenCV实现形态学运算的函数为：morphologyEx
 
 在标准参数化方式下，图像空间中的直线 l 的表达为：
 
-$d=x \cos \theta+y \sin \theta, \quad d \geqslant 0,0 \leqslant \theta<\pi$
+\begin{equation}
+d=x \cos \theta+y \sin \theta, \quad d \geqslant 0,0 \leqslant \theta<\pi
+\end{equation}
 
 右边的图意思是在一个点上，不同的$\theta$对应不同的$\rho$，$\theta$是穿过该点的直线的斜率，$\rho$是穿过该点的直线与原点的距离。这样穿过每个点作无数条直线，参数$\rho$和$\theta$就能绘出一个正弦图像。而如果1,2,3在一条直线上就可以找到⼀个$\theta$使得过1,2,3点的直线的$\rho$很接近。也就是有图上相交的过程。而通常使用的方法是累加法，求得累加次数最多的$(\theta, \rho)$从而确定这条直线。
 
@@ -121,7 +123,7 @@ $d=x \cos \theta+y \sin \theta, \quad d \geqslant 0,0 \leqslant \theta<\pi$
   \caption{霍夫圆示意}\label{Fig:img2}
 \end{figure}
 
-⾸先，分析过点$(x_{1}, y_{1})$的所有圆$(a_{1}(i), b_{1}(i),r_{1}(i))$，当确定$(r_{1}(i)$时，$(a_{1}(i), b_{1}(i))$的轨迹是⼀个以$(x_{1}, y_{1}, r_{1}(i))$为中心半径为$r_{1}(i)$的圆。那么，所有圆$(a_{1}(i), b_{1}(i),r_{1}(i))$的组成了一个以$(x_{1}, y_{1}, 0)$为顶点，锥角为90度的圆锥面。三个圆锥面的交点A即是同时过这三个点的圆。累加次数最多的A点就是一个圆⼼。
+⾸先，分析过点$(x_{1}, y_{1})$的所有圆$(a_{1}(i), b_{1}(i),r_{1}(i))$，当确定$(r_{1}(i)$时，$(a_{1}(i), b_{1}(i))$的轨迹是⼀个以$(x_{1}, y_{1}, r_{1}(i))$为中心半径为$r_{1}(i)$的圆。那么，所有圆$(a_{1}(i), b_{1}(i),r_{1}(i))$的组成了一个以$(x_{1}, y_{1}, 0)$为顶点，锥角为90度的圆锥面。三个圆锥面的交点A即是同时过这三个点的圆。累加次数最多的A点就是一个圆心。
 
 \section{滤波优化}
 
@@ -135,31 +137,35 @@ $d=x \cos \theta+y \sin \theta, \quad d \geqslant 0,0 \leqslant \theta<\pi$
 
 卡尔曼滤波最早可以追溯到\textbf{Wiener滤波}，不同的是卡尔曼采用状态空间来描述它的滤波器，卡尔曼滤波器同时具有模糊/平滑与预测功能，特别是后者在视频分析与对象跟踪应用场景中被发扬光大，在离散空间（图像或者视频帧）使用卡尔曼滤波器相对简单。假设我们根据一个处理想知道一个变量值如下：
 
-$x_{k+1}=\Phi x_{k}+w_{k}$
+\begin{equation}
+x_{k+1}=\Phi x_{k}+w_{k}
+\end{equation}
 
 其中$x_{k}$是在$\mathrm{k}$时刻的状态,$\Phi$是从$\mathrm{k}$到$\mathrm{k}+1$时刻的变换矩阵，$w_{k}$是 $\mathrm{k}$时刻相关白噪声的协方差矩阵。
 
 对观测值建模如下：
 
-$z_{k}=H x_{k}+v_{k}$
+\begin{equation}
+z_{k}=H x_{k}+v_{k}
+\end{equation}
 
 其中$z_{k}$是在k时刻对x的实际测量值，$\mathrm{H}$是状态矩阵与测量矩阵无噪声链接，$\mathrm{v}_{\mathrm{k}}$ 是测量错误
 
 这样就得到两个协方差矩阵
 
-$$
+\begin{equation}
 \begin{aligned}
 &Q=E\left[w_{k} w_{k}^{T}\right] \\
 &R=E\left[v_{k} v_{k}^{T}\right] \\
 &P_{k}=E\left[e_{k} e_{k}^{T}\right]=E\left[\left(x_{k}-\hat{x}_{k}\right)\left(x_{k}-\hat{x}_{k}\right)^{T}\right]
 \end{aligned}
-$$
+\end{equation}
 
 假设$\hat{x}_{k}$前一个评估为$\hat{x}_{k}^{\prime}$, 可以得到
 
-$$
+\begin{equation}
 \hat{x}_{k}=\hat{x}_{k}^{\prime}+K_{k}\left(z_{k}-H \hat{x}_{k}^{\prime}\right)
-$$
+\end{equation}
 
 其中$K_{k}$被称为卡尔曼增益, 有了它就可以更新测量模型，从而更新状态空间的下个预测。
 
@@ -191,7 +197,9 @@ PID控制作为应用非常广泛的控制算法，小到控制一个元件的�
 
 在工业过程中，连续控制系统的理想PID控制规律为：
 
-$u(t)=K_{p}\left(e(t)+\frac{1}{T_{t}} \int_{0}^{t} e(t) d t+T_{D} \frac{d e(t)}{d t}\right)$
+\begin{equation}
+u(t)=K_{p}\left(e(t)+\frac{1}{T_{t}} \int_{0}^{t} e(t) d t+T_{D} \frac{d e(t)}{d t}\right)
+\end{equation}
 
 式中，$K_{p}$为比例增益，比例度成倒数关系；$T_{t}$为积分时间常数；$T_{D}$为微分时间常数；$u(t)$为PID控制器的输出信号；$e(t)$为给定值$r(t)$与测量值之差。
 
@@ -237,31 +245,37 @@ $u(t)=K_{p}\left(e(t)+\frac{1}{T_{t}} \int_{0}^{t} e(t) d t+T_{D} \frac{d e(t)}{
 
 对于以下控制模型：
 
-$$
+\begin{equation}
 x(k+1)=A x(k)+B u(k)
-$$
+\end{equation}
 
 写成矩阵格式：
 
-$$
+\begin{equation}
 \left[\begin{array}{l}x_{1}(k+1) \\x_{2}(k+1)\end{array}\right]=\left[\begin{array}{cc}1 & 0.1 \\0 & 2\end{array}\right]\left[\begin{array}{l}x_{1}(k) \\x_{2}(k)\end{array}\right]+\left[\begin{array}{c}0 \\0.5\end{array}\right] u(k)
-$$
+\end{equation}
 
 此处的$x_{1}$和$x_{2}$可以理解为误差项
 
-$X(k)=\left[\begin{array}{c}x(k \mid k) \\x(k+1 \mid k) \\\vdots\\ x(k+j \mid k)\\\vdots \\x(k+N \mid k)\end{array}\right]$$U(k)=\left[\begin{array}{c}u(k \mid k) \\u(k+1 \mid k) \\\vdots\\ u(k+i \mid k)\\\vdots \\u(k+N-1 \mid k)\end{array}\right]$
+\begin{equation}
+X(k)=\left[\begin{array}{c}x(k \mid k) \\x(k+1 \mid k) \\\vdots\\ x(k+j \mid k)\\\vdots \\x(k+N \mid k)\end{array}\right]
+\end{equation}
+
+\begin{equation}
+U(k)=\left[\begin{array}{c}u(k \mid k) \\u(k+1 \mid k) \\\vdots\\ u(k+i \mid k)\\\vdots \\u(k+N-1 \mid k)\end{array}\right]
+\end{equation}
 
 对于MPC矩阵：
 
-$$
+\begin{equation}
 x_{k}=M x_{k}+C u_{k}
-$$
+\end{equation}
 
-$$
+\begin{equation}
 M=\left[\begin{array}{c}I_{n \times n} \\A_{n \times n} \\A_{n}^{2} \\\vdots \\A^{N}\end{array}\right]
-$$
+\end{equation}
 
-$$
+\begin{equation}
 C=\left[\begin{array}{cccc}
 0 & 0 & \ldots & 0 \\
 & \vdots & \ldots & \vdots \\
@@ -271,19 +285,23 @@ B_{n \times p} & 0 & \ldots & 0 \\
 A B_{n \times p} & B & \vdots & 0 \\
 \vdots & \vdots & & B
 \end{array}\right]
-$$
+\end{equation}
 
-$X(k)=\left[\begin{array}{c}x(k \mid k) \\x(k+1 \mid k) \\x(k+2 \mid k) \\x(k+3 \mid k)\end{array}\right]=\left[\begin{array}{c}x_{1}(k \mid k) \\x_{2}(k \mid k) \\x_{1}(k+1 \mid k) \\x_{2}(k+1 \mid k) \\x_{1}(k+2 \mid k) \\x_{2}(k+2 \mid k) \\x_{1}(k+3 \mid k) \\x_{2}(k+3 \mid k)\end{array}\right]$
+\begin{equation}
+X(k)=\left[\begin{array}{c}x(k \mid k) \\x(k+1 \mid k) \\x(k+2 \mid k) \\x(k+3 \mid k)\end{array}\right]=\left[\begin{array}{c}x_{1}(k \mid k) \\x_{2}(k \mid k) \\x_{1}(k+1 \mid k) \\x_{2}(k+1 \mid k) \\x_{1}(k+2 \mid k) \\x_{2}(k+2 \mid k) \\x_{1}(k+3 \mid k) \\x_{2}(k+3 \mid k)\end{array}\right]
+\end{equation}
 
-$U(k)=\left[\begin{array}{c}u(k \mid k) \\u(k+1 \mid k) \\u(k+2 \mid k)\end{array}\right]=\left[\begin{array}{c}\frac{u(k \mid k)}{u(k+1 \mid k)} \\u(k+2 \mid k)\end{array}\right]$
+\begin{equation}
+U(k)=\left[\begin{array}{c}u(k \mid k) \\u(k+1 \mid k) \\u(k+2 \mid k)\end{array}\right]=\left[\begin{array}{c}\frac{u(k \mid k)}{u(k+1 \mid k)} \\u(k+2 \mid k)\end{array}\right]
+\end{equation}
 
 计算出M矩阵和C矩阵
 
 之后构建\textbf{二次规划模式（cost function）}\cite{ArtE7}
 
-$$
+\begin{equation}
 J=\sum_{k=0}^{N-1} x(k+i \mid k)^{T} Q x(k+i \mid k)+u(k+i \mid k)^{T} R u(k+i \mid k)+x(k+N \mid k)^{T} F x(k+i \mid k)
-$$
+\end{equation}
 
 Q、R、F表示对应输入输出的\textbf{权重系数矩阵}
 
@@ -293,23 +311,23 @@ $x(k+N \mid k)^{T} F x(k+i \mid k)$与系统对应的终值状态相关
 
 简化上面的\textbf{代价函数（cost function）矩阵}
 
-$$
+\begin{equation}
 J=\boldsymbol{x}(k)^{T} \boldsymbol{G} \boldsymbol{x}(k)+\boldsymbol{U}(k)^{T} \boldsymbol{H} \boldsymbol{U}(k)+2 \boldsymbol{x}(k)^{T} \boldsymbol{E} \boldsymbol{U}(k)
-$$
+\end{equation}
 
 该矩阵只包含了输入项和已知的初始输入项$x(k)$
 
-$$
+\begin{equation}
 \begin{aligned}&G=M^{T} \bar{Q} M \\&E=C^{T} \bar{Q} M \\&H=C^{T} \bar{Q} C+\bar{R}\end{aligned}
-$$
+\end{equation}
 
 $\bar{Q}$和$\bar{R}$表示上面式子中的Q和R矩阵的增广形式
 
 G、H、E矩阵跟上面的M和C矩阵相关
 
-$$
+\begin{equation}
 \overline{\boldsymbol{Q}}=\left[\begin{array}{ccc}\boldsymbol{Q} & \cdots & \\\vdots & \boldsymbol{Q} & \vdots \\& \cdots & \boldsymbol{F}\end{array}\right] \quad \overline{\boldsymbol{R}}=\left[\begin{array}{ccc}\boldsymbol{R} & \cdots & \\\vdots & \ddots & \vdots \\& \cdots & R\end{array}\right]
-$$
+\end{equation}
 
 \subsection{MAVLink协议}
 
@@ -471,13 +489,13 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 刚体坐标系与惯性坐标系之间的关系可以用\textbf{旋转矩阵（Rotation Matrix）}表示
 
-$$
+\begin{equation}
 \boldsymbol{R}_{i b}=\left[\begin{array}{ccc}
 \cos \psi \cos \theta & \cos \psi \sin \varphi \sin \theta-\sin \psi \cos \varphi & \cos \psi \cos \varphi \sin \theta+\sin \psi \sin \varphi \\
 \sin \psi \cos \theta & \sin \psi \sin \varphi \sin \theta+\cos \psi \cos \varphi & \sin \psi \cos \varphi \sin \theta-\cos \psi \sin \varphi \\
 -\sin \theta & \sin \varphi \cos \theta & \cos \varphi \cos \theta
 \end{array}\right]
-$$
+\end{equation}
 
 其中$\varphi, \theta$和$\psi$分别代表滚转角，俯仰角和偏航角。
 
@@ -485,7 +503,7 @@ $$
 
 作用在四轴飞行器上的力和力矩是来自四个转子叶片的重力、阻力和推力，以及来自风等的外部干扰的结果。总推力是在飞行器框架中的负z方向上定向的，并且是来自四个单独电机的推力的总和。在惯性系中，总力可以表示为
 
-$$
+\begin{equation}
 \left(\begin{array}{l}
 F_{x} \\
 F_{y} \\
@@ -499,50 +517,50 @@ m g
 0 \\
 \sum_{k=1}^{4} T_{k}
 \end{array}\right]+\boldsymbol{F}_{d r a g}+\boldsymbol{F}_{\text {ext }},
-$$
+\end{equation}
 
 其中g是重力加速度，$F_{drag}$是来自阻力的力，而$F_{ext}$包含了所有的外力，例如由于风。假设阻力与各自方向上的速度成正比。最低水平的控制输入是提供给四个电机的单独电源。为了简单和安全，有一个内置的姿态控制系统，用于计算单个电机的推力指令。现在，控制输入是命令滚动角$\varphi_{cmd}$、俯仰角$\theta_{cmd}$、偏航率$\dot{\varphi}_{cmd}$和垂直速度$\omega_{cmd}$。假设垂直速度$\omega$对垂直速度命令的名义响应为一阶系统的形式，表示为拉普拉斯传递函数
 
-$$
+\begin{equation}
 W(s)=\frac{k_{w}}{\tau_{w} s+1} W_{c m d}(s)
-$$
+\end{equation}
 
 其中，$\omega(t)$为惯性系中的垂直速度。这意味着t时刻的总推力可以表示为
 
-$$
+\begin{equation}
 T(t)=\frac{g+\dot{w}(t)}{\cos \theta(t) \cos \varphi(t)}=\frac{g+1 / \tau_{w}\left(k_{w} w_{c m d}(t)-w(t)\right)}{\cos \theta(t) \cos \varphi(t)}
-$$
+\end{equation}
 
 姿态动力学近似为二阶系统。对于滚动和俯仰，从命令到姿态的传递函数以拉普拉斯传递函数的形式表示为
 
-$$
+\begin{equation}
 \Phi(s)=\frac{k_{\phi} \omega_{\phi}^{2}}{s^{2}+2 \xi_{\phi} \omega_{\phi} s+\omega_{\phi}^{2}} \Phi_{c m d}(s)
-$$
+\end{equation}
 
-$$
+\begin{equation}
 \Theta(s)=\frac{k_{\theta} \omega_{\theta}^{2}}{s^{2}+2 \xi_{\theta} \omega_{\theta} s+\omega_{\theta}^{2}} \Theta_{c m d}(s)
-$$
+\end{equation}
 
 各自地对于偏航运动，速率控制被建模为
 
-$$
+\begin{equation}
 \Psi(s)=\frac{1}{s} \frac{k_{\psi}}{\tau_{\psi} s+1} \dot{\Psi}_{c m d}(s)
-$$
+\end{equation}
 
 现在，这些动态模型可以总结为
 
-$$
+\begin{equation}
 \begin{aligned}
 \dot{\boldsymbol{p}}(t) &=\boldsymbol{v}(t) \\
 \dot{\boldsymbol{v}}(t) &=-\boldsymbol{g}+\boldsymbol{R}_{i b}(t) \boldsymbol{T}(t)-\boldsymbol{D} \boldsymbol{v}(t)+\frac{1}{m} \boldsymbol{F}_{e x t}(t) \\
 \dot{\boldsymbol{\theta}}(t) &=\boldsymbol{\omega}(t) \\
 \dot{\boldsymbol{\omega}}(t) &=f_{\omega}\left(\boldsymbol{\omega}(t), \boldsymbol{\theta}(t), \boldsymbol{\theta}_{c m d}(t)\right)
 \end{aligned}
-$$
+\end{equation}
 
 其中$p$表示位置，$v$表示速度，$a$表示加速度，$\theta$表示姿态，$\omega$表示角加速度。函数$f_{\omega}$由上述方程给出。可以看出，该模型仅在速度导数上是非线性的，其中输入项$R_{ib}T$由以下向量给出
 
-$$
+\begin{equation}
 \boldsymbol{R}_{i b} \boldsymbol{T}=(g+\dot{w})\left[\begin{array}{c}
 \frac{\cos \psi \cos \varphi \sin \theta+\sin \psi \sin \varphi}{\cos \theta \cos \varphi} \\
 \frac{\sin \psi \cos \varphi \sin \theta-\cos \psi \sin \varphi}{\cos \theta \cos \varphi} \\
@@ -552,21 +570,21 @@ $$
 \sin \psi \tan \theta-\frac{\cos \psi \tan \varphi}{\cos \theta} \\
 1
 \end{array}\right]
-$$
+\end{equation}
 
 对于飞行器的每一步控制时间段内，假设角度$\psi$和$\theta$很小，这可以近似为
 
-$$
+\begin{equation}
 \boldsymbol{R}_{i b} \boldsymbol{T} \approx(g+\dot{w})\left[\begin{array}{c}
 \cos \psi \cdot \theta+\sin \psi \cdot \varphi \\
 \sin \psi \cdot \theta-\cos \psi \cdot \varphi \\
 1
 \end{array}\right]
-$$
+\end{equation}
 
 系统方程在状态空间形式上表示如下
 
-$$
+\begin{equation}
 \frac{d}{d t}\left[\begin{array}{l}
 p_{x} \\
 p_{y} \\
@@ -580,9 +598,9 @@ u \\
 v \\
 w
 \end{array}\right]
-$$
+\end{equation}
 
-$$
+\begin{equation}
 \begin{aligned}
 \frac{d}{d t}\left[\begin{array}{c}
 u \\
@@ -614,9 +632,9 @@ F_{3}
 \sin \psi \tan \theta-\frac{\cos \psi \tan \varphi}{\cos \theta}
 \end{array}\right](g+\dot{w}) }
 \end{aligned}
-$$
+\end{equation}
 
-$$
+\begin{equation}
 \frac{d}{d t}\left[\begin{array}{l}
 \varphi \\
 \theta \\
@@ -630,9 +648,9 @@ $$
 \omega_{2} \\
 \omega_{3}
 \end{array}\right]
-$$
+\end{equation}
 
-$$
+\begin{equation}
 \begin{aligned}
 \frac{d}{d t}\left[\begin{array}{l}
 \omega_{1} \\
@@ -665,13 +683,13 @@ k_{\phi} \omega_{\phi}^{2} & 0 & 0 \\
 \psi_{c m d}
 \end{array}\right] . }
 \end{aligned}
-$$
+\end{equation}
 
 4.降落点约束
 
 在着陆过程中需要满足的相对位置有一些限制。第一个约束与接近的方向有关。因为我们不希望飞行器离降落板太远，而且由于降落板附近的地形存在一定的不确定性，我们制定了一个空间约束，迫使飞行器从大约上方接近降落板，这种非凸约束可以表示为：
 
-$$
+\begin{equation}
 \begin{array}{r}
 \boldsymbol{A}\left[\begin{array}{c}
 \Delta x(t) \\
@@ -680,13 +698,13 @@ h(t)
 \end{array}\right] \geq \boldsymbol{k}-M \boldsymbol{f}_{b}(b(t)) \\
 \boldsymbol{B} b(t) \leq \mathbf{1}
 \end{array}
-$$
+\end{equation}
 
 矩阵$\boldsymbol{A} \in \mathbb{R}^{k \times 3}$和向量$\boldsymbol{k} \in \mathbb{R}^{k}$一起描述区域的形状的平面不等式的形式，和$\boldsymbol{f}_{b}(b) \in {0,1}$是一个二进制向量值函数表明约束是活跃在一个给定的时间。此外，$M$被选择为一个足够大的常数。
 
 根据实际降落地形需要，这里的降落控制区域被选择为一个有六个边的多面体。对于边坡度的任意定义表示为
 
-$$
+\begin{equation}
 \left[\begin{array}{ccc}
 -h_{s} & 0 & \left(d_{x_{1}}-d_{l}\right) \\
 h_{s} & 0 & \left(-d_{x_{2}}-d_{l}\right) \\
@@ -706,16 +724,16 @@ d_{l} h_{s} \\
 h_{s} \\
 0
 \end{array}\right]
-$$
+\end{equation}
 
 除了这个空间约束外，我们还对着陆时的垂直速度进行了约束，表示为
 
-$$
+\begin{equation}
 \begin{aligned}
 &w(t) \geq w_{\min } \\
 &w(t) \geq k_{1} h(t)+w_{\min , \text { land }}
 \end{aligned}
-$$
+\end{equation}
 
 其中$\omega_{min,land}<0$为降落的极限速度，$k_{1}<0$为一个常量。
 
@@ -809,7 +827,7 @@ QGC地面站MAVLink回传显示\ref{Fig:img15}
 
 MPC角速率控制器跟踪的正弦参考是下面的傅里叶级数
 
-$$
+\begin{equation}
 \left[\begin{array}{c}
 \dot{\phi} \\
 \dot{\theta} \\
@@ -819,7 +837,7 @@ $$
 \sin t+\frac{\cos (3 t)}{2} \\
 \sin t+\frac{\cos (2 t)}{2}+\frac{\sin (3 t)}{3}
 \end{array}\right]
-$$
+\end{equation}
 
 变量$\dot{\phi}$、$\dot{\theta}$和$\dot{\psi}$是滚动、俯仰和偏航的角速率轴分别以弧度/秒为单位测量，t是模拟时间步长，其为
 边界在0和20之间；增量为0.2。
