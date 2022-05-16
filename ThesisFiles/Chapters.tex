@@ -12,7 +12,7 @@
 
 \section{国内外进展}
 
-20世纪以来，随着飞行控制算法技术和飞行控制硬件的发展，无人飞行器技术使传统的地面检测技术得以拓展，进入了空中检测的时代并随着算法和硬件的不断升级而快速发展。其中，国内有以DJI为主的行业级多旋翼飞行器以及配套的司空地面站平台，也有国外以开源为主的平台（如APM、PIX飞控系统和对应的QGroundControl、MissionPlanner等开源地面站），以及由国内其他公司研发与设计的基于STM32或TI嵌入式芯片为主的简易平台（如无名飞控、匿名飞控以及其他相关平台）。
+20世纪以来，随着飞行控制算法技术和飞行控制硬件的发展，无人飞行器技术使传统的地面检测技术得以拓展，进入了空中检测的时代并随着算法和硬件的不断升级而快速发展\cite{Net3}。其中，国内有以DJI为主的行业级多旋翼飞行器以及配套的司空地面站平台，也有国外以开源为主的平台（如APM、PIX飞控系统和对应的QGroundControl、MissionPlanner等开源地面站），以及由国内其他公司研发与设计的基于STM32或TI嵌入式芯片为主的简易平台（如无名飞控、匿名飞控以及其他相关平台）。
 
 如下对比介绍了一些知名的配套平台：
 
@@ -34,7 +34,7 @@
 
 传统的PID位置控制算法由于是基于无模型控制，随着P、I、D三个参数的变换，控制系统存在振荡或响应较慢等现象。因此，我们在PID的基础上，使用基于\textbf{线性模型(MPC)的预测控制}算法。该算法可以有效地克服过程的不确定性、非线性和并联性，并能方便的处理过程被控变量和操纵变量中的各种约束。
 
-因此，本课题利用DJI御2行业进阶版无人机，在自研的APP内通过使用DJI MSDK接口，将DJI MSDK协议信息转换至MAVLink UDP协议帧信息，并利用无人机端侧遥控器通过以太网数据链路远程组网传输至Windows端侧QGroundControl软件。
+因此，本课题利用DJI御2行业进阶版无人机，在自研的APP内通过使用DJI MSDK接口\cite{Net2}，将DJI MSDK协议信息转换至MAVLink UDP协议帧信息，并利用无人机端侧遥控器通过以太网数据链路远程组网传输至Windows端侧QGroundControl软件。
 
 由于国内外以开源为主的飞行器大多采用以MAVLink协议为主的通信解决方案，因此该方案可实现将DJI系列飞行器与开源飞行器进行地面站统一化管理与云上部署，显著地提升了飞行器间的兼容性与可靠性。
 
@@ -42,7 +42,15 @@
 
 \section{本文安排}
 
-本文将着重于飞行器的视觉引导自主降落阶段，基于OpenCV的自适应阈值+形态学处理+霍夫圆检测实现降落板的视觉识别，并利用卡尔曼滤波器预测飞行器当前状态下最优估计点。进一步，我们实现了基于MPC模型预测控制的飞行器下降段位置控制，并利用DJI MSDK接口将飞行器的相关信息转换为MAVLink协议，传输至QGC地面站。
+本文第一章介绍了国内外开源飞控系统以及以DJI为主的商业飞控系统的相关架构，分析了基于MAVLink协议的通信可行性，并概括说明了本文的研究内容。
+
+本文第二章介绍了项目所需要的相关技术和算法，包括OpenCV形态学处理+自适应阈值+霍夫圆检测，以及卡尔曼滤波器在降落点最优估计的应用，以及MPC模型预测控制。
+
+本文第三章分析了APP中集成的项目中关键算法的实现过程。
+
+本文第四章阐述了软硬件在环仿真以及实际试飞效果的测试。
+
+最后一章概述了项目的总体结构，对已完成的工作的分析，以及对于未来工作的展望。
 
 \chapter{关键技术和算法}
 \section{飞控平台}
@@ -229,7 +237,7 @@ u(t)=K_{p}\left(e(t)+\frac{1}{T_{t}} \int_{0}^{t} e(t) d t+T_{D} \frac{d e(t)}{d
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\linewidth]{./Figure/MPC-Control.png}
+  \includegraphics[width=0.8\linewidth]{./Figure/MPC_Control_Loop.png}
   \caption{MPC控制系统结构图}\label{Fig:img5}
 \end{figure}
 
@@ -295,35 +303,27 @@ X(k)=\left[\begin{array}{c}x(k \mid k) \\x(k+1 \mid k) \\x(k+2 \mid k) \\x(k+3 \
 U(k)=\left[\begin{array}{c}u(k \mid k) \\u(k+1 \mid k) \\u(k+2 \mid k)\end{array}\right]=\left[\begin{array}{c}\frac{u(k \mid k)}{u(k+1 \mid k)} \\u(k+2 \mid k)\end{array}\right]
 \end{equation}
 
-计算出M矩阵和C矩阵
-
-之后构建\textbf{二次规划模式（cost function）}\cite{ArtE7}
+计算出M矩阵和C矩阵，之后构建\textbf{二次规划模式（cost function）}\cite{ArtE7}。
 
 \begin{equation}
 J=\sum_{k=0}^{N-1} x(k+i \mid k)^{T} Q x(k+i \mid k)+u(k+i \mid k)^{T} R u(k+i \mid k)+x(k+N \mid k)^{T} F x(k+i \mid k)
 \end{equation}
 
-Q、R、F表示对应输入输出的\textbf{权重系数矩阵}
+上式中Q、R、F表示对应输入输出的\textbf{权重系数矩阵}，Q矩阵影响x变量的相关性，R矩阵跟输入相关，F矩阵跟终值相关，$x(k+N \mid k)^{T} F x(k+i \mid k)$与系统对应的终值状态相关。
 
-Q矩阵影响x变量的相关性，R矩阵跟输入相关，F矩阵跟终值相关
-
-$x(k+N \mid k)^{T} F x(k+i \mid k)$与系统对应的终值状态相关
-
-简化上面的\textbf{代价函数（cost function）矩阵}
+简化上面的\textbf{代价函数（cost function）矩阵}得到下面的公式：
 
 \begin{equation}
 J=\boldsymbol{x}(k)^{T} \boldsymbol{G} \boldsymbol{x}(k)+\boldsymbol{U}(k)^{T} \boldsymbol{H} \boldsymbol{U}(k)+2 \boldsymbol{x}(k)^{T} \boldsymbol{E} \boldsymbol{U}(k)
 \end{equation}
 
-该矩阵只包含了输入项和已知的初始输入项$x(k)$
+该矩阵只包含了输入项和已知的初始输入项$x(k)$。
 
 \begin{equation}
 \begin{aligned}&G=M^{T} \bar{Q} M \\&E=C^{T} \bar{Q} M \\&H=C^{T} \bar{Q} C+\bar{R}\end{aligned}
 \end{equation}
 
-$\bar{Q}$和$\bar{R}$表示上面式子中的Q和R矩阵的增广形式
-
-G、H、E矩阵跟上面的M和C矩阵相关
+$\bar{Q}$和$\bar{R}$表示上面式子中的Q和R矩阵的增广形式，G、H、E矩阵跟上面的M和C矩阵相关。
 
 \begin{equation}
 \overline{\boldsymbol{Q}}=\left[\begin{array}{ccc}\boldsymbol{Q} & \cdots & \\\vdots & \boldsymbol{Q} & \vdots \\& \cdots & \boldsymbol{F}\end{array}\right] \quad \overline{\boldsymbol{R}}=\left[\begin{array}{ccc}\boldsymbol{R} & \cdots & \\\vdots & \ddots & \vdots \\& \cdots & R\end{array}\right]
@@ -377,7 +377,7 @@ MAVLink帧的介绍如图\ref{Fig:img8}所示。
 
 \section{APP整体框架}
 
-本项目基于开源代码\textbf{rosettadrone}进行二次开发，在Android源代码的基础上单独添加了OpenCV检测框架以及MPC位置控制器设计部分\cite{ArtE11}。Rosetta Drone是DJI SDK的MAVLink包装器，允许用户使用MAVLink语言的地面控制站控制DJI无人机。从理论上讲，它应该与任何MAVLink GCS一起使用，但到目前为止，我们所有测试都是使用QGroundControl完成的。\cite{ArtE12}
+本项目基于开源代码\textbf{rosettadrone}进行二次开发，在Android源代码的基础上单独添加了OpenCV检测框架以及MPC位置控制器设计部分\cite{ArtE11}。Rosetta Drone是DJI SDK的MAVLink包装器，允许用户使用MAVLink语言的地面控制站控制DJI无人机。从理论上讲，它应该与任何MAVLink GCS一起使用，但到目前为止，我们所有测试都是使用QGroundControl完成的。\cite{Net1}
 
 APP集成的功能：
 
@@ -423,7 +423,7 @@ c.将UDP端口更改为 5600。
 
 使用DJI的codecManager函数获取H.264的RGBA原始视频，并将获取到的每一帧新建一个Mat类型的矩阵，用于后续处理。之后利用cvtColor函数将该帧图像的RGB色彩通道转化为灰度图像，之后进行闭运算并利用findContours函数寻找图像的轮廓，寻找到轮廓后，利用drawContours函数将轮廓绘制出来，最后将图像转化为Mat类型的矩阵，并将其存入一个vector类型的容器中，最后进行霍夫圆检测。
 
-OpenCV实现的是一个比标准霍夫圆变换更为灵活的检测方法——霍夫梯度法，该方法运算量相对于标准霍夫圆变换大大减少。其检测原理是依据圆心一定是在圆上的每个点的模向量上，这些圆上点模向量的交点就是圆心，霍夫梯度法的第一步就是找到这些圆心，这样三维的累加平⾯就又转化为二维累加平面。第二步是根据所有候选中心的边缘非0像素对其的支持程度来确定半径。
+OpenCV实现的是一个比标准霍夫圆变换更为灵活的检测方法——霍夫梯度法，该方法运算量相对于标准霍夫圆变换大大减少。其检测原理是依据圆心一定是在圆上的每个点的模向量上，这些圆上点模向量的交点就是圆心，霍夫梯度法的第一步就是找到这些圆心，这样三维的累加平⾯就又转化为二维累加平面。第二步是根据所有候选中心的边缘非0像素对其的支持程度来确定半径\cite{ArtE15}。
 
 具体实现方法如下：
 
@@ -479,7 +479,7 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 2.飞行器运动学模型
 
-我们区分两个主框架——\textbf{惯性框架（ENU Frame）}和\textbf{身体框架（Body Frame）}，如图\ref{Fig:img-append10}所示。惯性坐标系在这里给出了\textbf{东-北-上（ENU）}坐标，并且身体框架以\textbf{向前 - 左 - 向上（FLU）}坐标给出。选择此约定是因为它是SDK中提供的约定。因此，数据是已经在此参考框架中交付。有关四轴飞行器SDK的更多详细信息，请参阅DJI MSDK相关文档说明。偏航角$\psi$定义为无人机的前向一侧和东面。
+我们区分两个主框架——\textbf{惯性框架（ENU Frame）}和\textbf{身体框架（Body Frame）}，如图\ref{Fig:img-append10}所示。惯性坐标系在这里给出了\textbf{东-北-上（ENU）}坐标，并且身体框架以\textbf{向前 - 左 - 向上（FLU）}坐标给出\cite{ArtE13}。选择此约定是因为它是SDK中提供的约定。因此，数据是已经在此参考框架中交付。有关四轴飞行器SDK的更多详细信息，请参阅DJI MSDK相关文档说明。偏航角$\psi$定义为无人机的前向一侧和东面。
 
 \begin{figure}[ht]
   \centering
@@ -501,7 +501,7 @@ OpenCV中有两个版本的卡尔曼滤波方法：KalmanFilter(C++)和CvKalman�
 
 3.飞行器动力学模型
 
-作用在四轴飞行器上的力和力矩是来自四个转子叶片的重力、阻力和推力，以及来自风等的外部干扰的结果。总推力是在飞行器框架中的负z方向上定向的，并且是来自四个单独电机的推力的总和。在惯性系中，总力可以表示为
+作用在四轴飞行器上的力和力矩是来自四个转子叶片的重力、阻力和推力，以及来自风等的外部干扰的结果。总推力是在飞行器框架中的负z方向上定向的，并且是来自四个单独电机的推力的总和\cite{ArtE13}。在惯性系中，总力可以表示为
 
 \begin{equation}
 \left(\begin{array}{l}
@@ -519,7 +519,7 @@ m g
 \end{array}\right]+\boldsymbol{F}_{d r a g}+\boldsymbol{F}_{\text {ext }},
 \end{equation}
 
-其中g是重力加速度，$F_{drag}$是来自阻力的力，而$F_{ext}$包含了所有的外力，例如由于风。假设阻力与各自方向上的速度成正比。最低水平的控制输入是提供给四个电机的单独电源。为了简单和安全，有一个内置的姿态控制系统，用于计算单个电机的推力指令。现在，控制输入是命令滚动角$\varphi_{cmd}$、俯仰角$\theta_{cmd}$、偏航率$\dot{\varphi}_{cmd}$和垂直速度$\omega_{cmd}$。假设垂直速度$\omega$对垂直速度命令的名义响应为一阶系统的形式，表示为拉普拉斯传递函数
+其中g是重力加速度，$F_{drag}$是来自阻力的力，而$F_{ext}$包含了所有的外力，例如由于风。假设阻力与各自方向上的速度成正比。最低水平的控制输入是提供给四个电机的单独电源。为了简单和安全，有一个内置的姿态控制系统，用于计算单个电机的推力指令\cite{ArtE14}。现在，控制输入是命令滚动角$\varphi_{cmd}$、俯仰角$\theta_{cmd}$、偏航率$\dot{\varphi}_{cmd}$和垂直速度$\omega_{cmd}$。假设垂直速度$\omega$对垂直速度命令的名义响应为一阶系统的形式，表示为拉普拉斯传递函数
 
 \begin{equation}
 W(s)=\frac{k_{w}}{\tau_{w} s+1} W_{c m d}(s)
@@ -839,8 +839,7 @@ MPC角速率控制器跟踪的正弦参考是下面的傅里叶级数
 \end{array}\right]
 \end{equation}
 
-变量$\dot{\phi}$、$\dot{\theta}$和$\dot{\psi}$是滚动、俯仰和偏航的角速率轴分别以弧度/秒为单位测量，t是模拟时间步长，其为
-边界在0和20之间；增量为0.2。
+变量$\dot{\phi}$、$\dot{\theta}$和$\dot{\psi}$是滚动、俯仰和偏航的角速率轴分别以弧度/秒为单位测量，t是模拟时间步长，其数值边界在0和20之间；增量为0.2。
 
 表\ref{Fig:table2}显示了MATLAB模拟需要初始化的参数，其中$\left[\begin{array}{lll}p & q & r\end{array}\right]^{T}=\left[\begin{array}{lll}\dot{\phi} & \dot{\theta} & \dot{\psi}\end{array}\right]^{T}$，$n_{u}=3, n_{y}=6$
 
@@ -860,11 +859,11 @@ MPC角速率控制器跟踪的正弦参考是下面的傅里叶级数
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\linewidth]{./Figure/MPC_Control_Steps.png}
+  \includegraphics[width=0.5\linewidth]{./Figure/MPC_Control_Steps.png}
   \caption{MPC控制步骤}\label{Fig:img16_add}
 \end{figure}
 
-实际测试中，我们不同类型的扰动进行了扰动补偿测试，主要表现为作用于四轴飞行器上的阵风以及由于降落点检测误差等导致的极少数错误的降落点坐标。DJI Simulator导出的结果显示，在大约距离地面10m时，飞行器会暂时减缓下降速度，以使其更好地对齐降落板，以便垂直速度更好地匹配。然后，当无人机继续下降时，它以一个安全的相对垂直速度着陆，使用估计的上升运动作为飞行高度的参考。该仿真结果说明了该控制器在静态干扰下的工作原理。
+实际测试中，我们不同类型的扰动进行了扰动补偿测试，主要表现为作用于四轴飞行器上的阵风以及由于降落点检测误差等导致的极少数错误的降落点坐标。\cite{ArtE15}DJI Simulator导出的结果显示，在大约距离地面10m时，飞行器会暂时减缓下降速度，以使其更好地对齐降落板，以便垂直速度更好地匹配。然后，当无人机继续下降时，它以一个安全的相对垂直速度着陆，使用估计的上升运动作为飞行高度的参考。该仿真结果说明了该控制器在静态干扰下的工作原理。
 
 图\ref{Fig:img17}和\ref{Fig:img18}为MPC控制的\textbf{滚转速率(roll rate)}和\textbf{俯仰速率(pitch rate)}曲线，绘制的飞行数据中使用的控制视野和预测视野分别为2和4。
 
@@ -910,9 +909,9 @@ DJI MSDK为开发者提供了便携的API接口，同时基于DJI行业级别的
 
 由于自主航点飞行的部分基于DJI MSDK API实现，但是DJI系列的飞行器本身不自带降落点视觉检测与自主降落控制，因此我们把项目的重点放在对于降落板的视觉识别与最优估计以及基于MPC模型预测控制的降落控制上。
 
-由于我们的降落板特征较为明显，且受到带屏遥控器本身的硬件算力限制，相对于深度学习目标检测，传统的OpenCV相关检测算法检测效率较快，在合适的参数范围下效果更为优秀。卡尔曼滤波器最优化估计作为状态空间模型中无法直接获取的数据，基于自身观测和预测的数据进行最优估计，对于含有高斯噪声的线性系统效果尤为优秀。
+由于我们的降落板特征较为明显，且受到带屏遥控器本身的硬件算力限制，相对于深度学习目标检测，传统的OpenCV相关检测算法显著地提升了检测效率，在合适的参数范围下具有较好的效果。卡尔曼滤波器最优化估计作为状态空间模型中无法直接获取的数据，基于自身观测和预测的数据进行最优估计，对于含有高斯噪声的线性系统效果尤为优秀。
 
-测试中发现，MPC控制对于飞行器的角速率变化较为敏感，针对于飞行器的不同负载状态，角度控制和角速度控制存在较大的差异。所得结果表明，MPC角速率控制器能够获得对设定点角速率的密切参考跟踪，这些结果证明了在DJI飞行器上实现MPC模型预测位置控制的可能性。
+测试中发现，MPC控制对于飞行器的角速率变化较为敏感，针对于飞行器的不同负载状态，角度控制和角速度控制存在较大的差异。所得结果表明，MPC角速率控制器能够获得对设定点角速率的密切参考跟踪，这些结果证明了在DJI飞行器上实现MPC模型预测位置控制的可能性\cite{ArtE8}。
 
 MAVLink作为兼容开源界多种飞行器构型的轻小型化飞行器通讯协议，具有较多的功能和帧格式，但是由于DJI飞行器接口数据类型的限制等，无法将大部分MAVLink多旋翼的相关参数传回至QGC地面站。因此，我们根据实际需要有选择性地传输相关飞行参数，并针对于DJI MSDK接口数据进行了相关类型和协议的转换。
 
