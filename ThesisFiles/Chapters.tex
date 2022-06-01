@@ -97,7 +97,7 @@ OpenCV实现形态学运算的函数为：morphologyEx
 
 1.\textbf{霍夫变换}
 
-\textbf{霍夫变换(Hough Transform, HT)}于1962年由Paul Hough首次提出，后于1972年由Richard Duda和Peter Hart推⼴使⽤，经典霍夫变换⽤来检测图像中的直线，是模式识别领域中对二值图像进行直线检测的有效方法\cite{Art2}，后来霍夫变换扩展到任意形状物体的识别，多为圆和椭圆，如图\ref{Fig:img1}所示。
+\textbf{霍夫变换(Hough Transform, HT)}于1962年由Paul Hough首次提出，后于1972年由Richard Duda和Peter Hart推广使用，经典霍夫变换用来检测图像中的直线，是模式识别领域中对二值图像进行直线检测的有效方法\cite{Art2}，后来霍夫变换扩展到任意形状物体的识别，多为圆和椭圆，如图\ref{Fig:img1}所示。
 
 \begin{figure}[ht]
   \centering
@@ -435,9 +435,9 @@ OpenCV实现的是一个比标准霍夫圆变换更为灵活的检测方法—�
 
 4.然后从二维累加器中这些点中选择候选的中心，这些中心都大于给定阈值并且大于其所有近邻。这些候选的中心按照累加值降序排列，以便于最支持像素的中心首先出现。
 
-5.接下来对每⼀个中心，考虑所有的非0像素，并把这些像素按照其与中心的距离排序。从到最大半径的最小距离算起，选择非0像素最支持的⼀条半径\cite{Art6}。
+5.接下来对每一个中心，考虑所有的非0像素，并把这些像素按照其与中心的距离排序。从到最大半径的最小距离算起，选择非0像素最支持的⼀条半径\cite{Art6}。
 
-6.如果⼀个中心收到边缘图像⾮0像素最充分的支持，并且到前期被选择的中心有足够的距离，那么它就会被保留下来。
+6.如果一个中心收到边缘图像非0像素最充分的支持，并且到前期被选择的中心有足够的距离，那么它就会被保留下来。
 
 \section{卡尔曼滤波与优化}
 
@@ -845,12 +845,12 @@ MPC角速率控制器跟踪的正弦参考是下面的傅里叶级数
 
 \begin{table}
   \centering
+  \caption{MATLAB模拟需要初始化的参数}\label{Fig:table2}
   \begin{tabular}{|c|c|c|c|c|}
     \hline$n_{u}$ & $n_{y}$ & $\mathbf{p}, \mathbf{q}$ & $\mathbf{r}$ & disturbance \\
     \hline 3 & 6 & $\operatorname{sint}+\frac{\cos (3 t)}{2}$ & $\operatorname{sint}+\frac{\cos (2 t)}{2}+\frac{\sin (3 t)}{3}$ & $(\operatorname{rand}(3,101) * 2-1) * 0.5$ \\
     \hline
   \end{tabular}
-  \caption{MATLAB模拟需要初始化的参数}\label{Fig:table2}
 \end{table}
 
 为了验证MPC模型预测控制的效果，我们通过最小化过程通过封装\textbf{Hildreth的二次规划函数}和\textbf{状态空间模型}参数来减缓，在向混控器模块输出输入（或扭矩）命令之前至少运行两次。运行三次循环导致四轴飞行器在起飞后偏离航线，随后出现控制不稳定。然而，一个带有两次迭代的循环导致了通过每个任务路径点的相对平稳的飞行，并且任务以一个安全着陆结束。
@@ -859,7 +859,7 @@ MPC角速率控制器跟踪的正弦参考是下面的傅里叶级数
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.5\linewidth]{./Figure/MPC_Control_Steps.png}
+  \includegraphics[width=0.2\linewidth]{./Figure/MPC_Control_Steps.png}
   \caption{MPC控制步骤}\label{Fig:img16_add}
 \end{figure}
 
@@ -880,6 +880,8 @@ MPC角速率控制器跟踪的正弦参考是下面的傅里叶级数
 \end{figure}
 
 \section{降落点精准度评价}
+
+实际测试中发现，当飞行器距离地面高度超过10~15m时，由于相机视野范围内地面降落板较小，难以获取其特征从而实现精准着陆，因此我们需要控制航点飞行结束后，进入视觉引导降落阶段的飞行器所处高度在10m左右，若最后一个航点的高度超过15m，则调用DJI MSDK API下降高度到最佳检测高度，然后开始视觉检测与自动降落控制。
 
 未使用卡尔曼滤波器的降落点检测，无人机降落落点精度为：-15cm\~15cm。
 
